@@ -1,8 +1,7 @@
 import { db } from '@/db';
-import { apiKeys } from '@/db/schema';
 import { verifyApiKey, validateApiKeyFormat } from '@/lib/api-key';
 import { corsResponse } from '@/lib/cors';
-import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 export async function POST(req: Request) {
   try {
@@ -11,18 +10,26 @@ export async function POST(req: Request) {
       return corsResponse({ valid: false }, { status: 401 });
     }
 
-    const keys = await db.select().from(apiKeys).where(eq(apiKeys.revoked, false));
-    for (const k of keys) {
-      if (verifyApiKey(key, k.keyHash)) {
-        await db.update(apiKeys)
-          .set({ lastUsedAt: new Date() })
-          .where(eq(apiKeys.id, k.id));
-        return corsResponse({ valid: true, label: k.label });
+    const result = await db.execute(sql`
+      SELECT id, key_hash, key_prefix, label, created_at, last_used_at, revoked
+      FROM api_keys
+      WHERE revoked = false
+    `);
+
+    for (const row of result.rows as any[]) {
+      if (verifyApiKey(key, row.key_hash)) {
+        await db.execute(sql`
+          UPDATE api_keys 
+          SET last_used_at = NOW() 
+          WHERE id = ${row.id}
+        `);
+        return corsResponse({ valid: true, label: row.label });
       }
     }
 
     return corsResponse({ valid: false }, { status: 401 });
   } catch (e) {
+    console.error('Verify error:', e);
     return corsResponse({ error: String(e) }, { status: 500 });
   }
 }
