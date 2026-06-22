@@ -1,7 +1,4 @@
-
-import { db } from '@/db';
-import { projects } from '@/db/schema';
-import { desc, eq, and } from 'drizzle-orm';
+import { query } from '@/db';
 import { revalidatePath } from 'next/cache';
 import { corsResponse } from '@/lib/cors';
 
@@ -11,10 +8,8 @@ export async function GET(req: Request) {
 
   try {
     const data = includeDrafts
-      ? await db.select().from(projects).orderBy(desc(projects.sortOrder))
-      : await db.select().from(projects)
-        .where(and(eq(projects.published, true), eq(projects.draft, false)))
-        .orderBy(desc(projects.sortOrder));
+      ? await query<any>('SELECT * FROM projects ORDER BY sort_order DESC')
+      : await query<any>('SELECT * FROM projects WHERE published = true AND draft = false ORDER BY sort_order DESC');
     return corsResponse(data);
   } catch (e) {
     return corsResponse({ error: String(e) }, { status: 500 });
@@ -24,19 +19,17 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const [project] = await db.insert(projects).values({
-      titleZh: body.titleZh, titleEn: body.titleEn,
-      descriptionZh: body.descriptionZh ?? body.descZh,
-      descriptionEn: body.descriptionEn ?? body.descEn,
-      tags: body.tags ?? [],
-      link: body.link ?? null,
-      draft: body.draft ?? true,
-      published: body.published ?? false,
-      sortOrder: body.sortOrder ?? 0,
-    }).returning();
+    const { titleZh, titleEn, descriptionZh, descriptionEn, tags, link, draft, published, sortOrder } = body;
+
+    const result = await query<any>(
+      `INSERT INTO projects (title_zh, title_en, description_zh, description_en, tags, link, draft, published, sort_order)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING *`,
+      [titleZh, titleEn, descriptionZh || '', descriptionEn || '', tags || [], link || null, draft ?? true, published ?? false, sortOrder ?? 0]
+    );
 
     revalidatePath('/');
-    return corsResponse(project);
+    return corsResponse(result[0]);
   } catch (e) {
     return corsResponse({ error: String(e) }, { status: 500 });
   }

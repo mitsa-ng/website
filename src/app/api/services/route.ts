@@ -1,7 +1,4 @@
-
-import { db } from '@/db';
-import { services } from '@/db/schema';
-import { desc, eq, and } from 'drizzle-orm';
+import { query } from '@/db';
 import { revalidatePath } from 'next/cache';
 import { corsResponse } from '@/lib/cors';
 
@@ -10,25 +7,22 @@ export async function GET(req: Request) {
   const includeDrafts = searchParams.get('drafts') === 'true';
 
   const data = includeDrafts
-    ? await db.select().from(services).orderBy(desc(services.sortOrder))
-    : await db.select().from(services)
-      .where(and(eq(services.published, true), eq(services.draft, false)))
-      .orderBy(desc(services.sortOrder));
+    ? await query<any>('SELECT * FROM services ORDER BY sort_order DESC')
+    : await query<any>('SELECT * FROM services WHERE published = true AND draft = false ORDER BY sort_order DESC');
   return corsResponse(data);
 }
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const [svc] = await db.insert(services).values({
-    titleZh: body.titleZh, titleEn: body.titleEn,
-    descriptionZh: body.descriptionZh ?? body.descZh,
-    descriptionEn: body.descriptionEn ?? body.descEn,
-    price: body.price ?? '',
-    featured: body.featured ?? false,
-    draft: body.draft ?? true,
-    published: body.published ?? false,
-    sortOrder: body.sortOrder ?? 0,
-  }).returning();
+  const { titleZh, titleEn, descriptionZh, descriptionEn, price, featured, draft, published, sortOrder } = body;
+
+  const result = await query<any>(
+    `INSERT INTO services (title_zh, title_en, description_zh, description_en, price, featured, draft, published, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+     RETURNING *`,
+    [titleZh, titleEn, descriptionZh || '', descriptionEn || '', price || '', featured ?? false, draft ?? true, published ?? false, sortOrder ?? 0]
+  );
+
   revalidatePath('/');
-  return corsResponse(svc);
+  return corsResponse(result[0]);
 }
