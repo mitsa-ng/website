@@ -1,6 +1,9 @@
 import { Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import * as schema from './schema';
 
 let _pool: Pool | null = null;
+let _db: ReturnType<typeof drizzle> | null = null;
 
 function getPool(): Pool {
   if (!_pool) {
@@ -10,6 +13,19 @@ function getPool(): Pool {
   }
   return _pool;
 }
+
+function getDb() {
+  if (!_db) {
+    _db = drizzle(getPool(), { schema });
+  }
+  return _db;
+}
+
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_target, prop) {
+    return getDb()[prop as keyof typeof _db];
+  },
+});
 
 export async function query<T>(text: string, params?: any[]): Promise<T[]> {
   const pool = getPool();
