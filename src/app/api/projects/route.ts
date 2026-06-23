@@ -27,9 +27,9 @@ export async function POST(req: Request) {
 
     const result = await query<any>(
       `INSERT INTO projects (title_zh, title_en, description_zh, description_en, tags, link, draft, published, sort_order)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, $8, $9)
        RETURNING *`,
-      [titleZh, titleEn, descriptionZh || '', descriptionEn || '', tags || [], link || null, draft ?? true, published ?? false, sortOrder ?? 0]
+      [titleZh, titleEn, descriptionZh || '', descriptionEn || '', JSON.stringify(tags ?? []), link || null, draft ?? true, published ?? false, sortOrder ?? 0]
     );
 
     revalidatePath('/');

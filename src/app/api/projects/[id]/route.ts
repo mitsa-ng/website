@@ -11,18 +11,19 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const body = await req.json();
 
   const updateData: Record<string, any> = {};
+  const casts: Record<string, string> = {};
   if (body.titleZh !== undefined) updateData.title_zh = body.titleZh;
   if (body.titleEn !== undefined) updateData.title_en = body.titleEn;
   if (body.descriptionZh !== undefined) updateData.description_zh = body.descriptionZh;
   if (body.descriptionEn !== undefined) updateData.description_en = body.descriptionEn;
-  if (body.tags !== undefined) updateData.tags = body.tags;
+  if (body.tags !== undefined) { updateData.tags = JSON.stringify(body.tags); casts.tags = '::jsonb'; }
   if (body.link !== undefined) updateData.link = body.link;
   if (body.draft !== undefined) updateData.draft = body.draft;
   if (body.published !== undefined) updateData.published = body.published;
   if (body.sortOrder !== undefined) updateData.sort_order = body.sortOrder;
   updateData.updated_at = new Date();
 
-  const sets = Object.entries(updateData).map(([k, v], i) => `${k} = $${i + 2}`).join(', ');
+  const sets = Object.entries(updateData).map(([k, v], i) => `${k} = $${i + 2}${casts[k] || ''}`).join(', ');
   const values = Object.values(updateData);
 
   const result = await query<any>(
