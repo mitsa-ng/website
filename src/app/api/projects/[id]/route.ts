@@ -18,6 +18,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (body.descriptionEn !== undefined) updateData.description_en = body.descriptionEn;
   if (body.tags !== undefined) { updateData.tags = JSON.stringify(body.tags); casts.tags = '::jsonb'; }
   if (body.link !== undefined) updateData.link = body.link;
+  if (body.imageUrl !== undefined) updateData.image_url = body.imageUrl;
   if (body.draft !== undefined) updateData.draft = body.draft;
   if (body.published !== undefined) updateData.published = body.published;
   if (body.sortOrder !== undefined) updateData.sort_order = body.sortOrder;

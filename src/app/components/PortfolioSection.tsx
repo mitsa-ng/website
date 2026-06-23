@@ -12,6 +12,7 @@ interface Project {
   descriptionEn: string
   tags: string[]
   link?: string | null
+  imageUrl?: string | null
 }
 
 export default function PortfolioSection() {
@@ -31,7 +32,7 @@ export default function PortfolioSection() {
         {(projects || []).map((p, i) => (
           <Reveal key={p.id} delay={i % 3}>
             <div className={`project-card${p.link ? ' clickable' : ''}`} onClick={() => p.link && window.open(p.link, '_blank', 'noopener')}>
-              <div className="thumb" />
+              <div className="thumb" style={p.imageUrl ? { backgroundImage: `url(${p.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined} />
               <div className="body">
                 <h3>{p[titleKey]}</h3>
                 <p>{p[descKey]}</p>
