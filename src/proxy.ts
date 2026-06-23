@@ -16,7 +16,7 @@ export function proxy(req: NextRequest) {
   }
 
   const publicPaths = ['/api/contact', '/api/auth/'];
-  const publicGetPaths = ['/api/posts', '/api/projects', '/api/services'];
+  const publicGetPaths = ['/api/posts', '/api/projects', '/api/services', '/api/settings'];
 
   const isPublic = publicPaths.some(p => pathname === p || pathname.startsWith(p));
   const isPublicGet = publicGetPaths.some(p => pathname === p || pathname.startsWith(p + '/')) && req.method === 'GET';
