@@ -28,14 +28,24 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   }
 }
 
+const CONTACT_COLUMNS: Record<string, string> = {
+  name: 'name',
+  email: 'email',
+  message: 'message',
+};
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const authError = await requireAdmin(req);
   if (authError) return authError;
   try {
     const { id } = await params;
     const body = await req.json();
-    const sets = Object.entries(body).map(([k, v], i) => `${k} = $${i + 2}`).join(', ');
-    const values = Object.values(body);
+    const entries = Object.entries(CONTACT_COLUMNS)
+      .filter(([k]) => body[k] !== undefined)
+      .map(([k, col], i) => ({ col, val: body[k], idx: i + 2 }));
+    if (entries.length === 0) return corsResponse({ ok: true });
+    const sets = entries.map(e => `${e.col} = $${e.idx}`).join(', ');
+    const values = entries.map(e => e.val);
     await query(`UPDATE contacts SET ${sets} WHERE id = $1`, [Number(id), ...values]);
     return corsResponse({ ok: true });
   } catch (e) {
