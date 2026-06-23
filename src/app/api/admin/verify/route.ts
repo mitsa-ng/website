@@ -2,6 +2,10 @@ import { query } from '@/db';
 import { verifyApiKey, validateApiKeyFormat } from '@/lib/api-key';
 import { corsResponse } from '@/lib/cors';
 
+export async function OPTIONS() {
+  return corsResponse({}, { status: 204 });
+}
+
 export async function POST(req: Request) {
   try {
     const { key } = await req.json();
