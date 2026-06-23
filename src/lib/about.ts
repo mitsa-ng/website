@@ -16,17 +16,16 @@ export interface AboutContent {
   certifications: { id: string; year: string; nameZh: string; nameEn: string; issuerZh: string; issuerEn: string }[]
 }
 
-let cached: AboutContent | null = null
 let promise: Promise<AboutContent | null> | null = null
 
 export function getAboutContent(): Promise<AboutContent | null> {
-  if (cached) return Promise.resolve(cached)
   if (!promise) {
     promise = fetch('/api/settings')
       .then(r => r.json())
       .then(d => transformKeys(d) as Record<string, any>)
-      .then(d => { cached = (d.aboutContent as AboutContent) || null; return cached })
+      .then(d => (d.aboutContent as AboutContent) || null)
       .catch(() => null)
+      .finally(() => { promise = null })
   }
   return promise
 }
