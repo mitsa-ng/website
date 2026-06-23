@@ -1,6 +1,7 @@
 import { query } from '@/db';
 import { revalidatePath } from 'next/cache';
 import { corsResponse } from '@/lib/cors';
+import { requireAdmin } from '@/lib/auth';
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -13,6 +14,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   const { slug } = await params;
   const body = await req.json();
 
@@ -47,7 +51,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ slug: st
   return corsResponse(result[0]);
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   const { slug } = await params;
   await query('DELETE FROM posts WHERE slug = $1', [slug]);
   revalidatePath('/');

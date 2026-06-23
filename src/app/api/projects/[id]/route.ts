@@ -1,8 +1,12 @@
 import { query } from '@/db';
 import { revalidatePath } from 'next/cache';
 import { corsResponse } from '@/lib/cors';
+import { requireAdmin } from '@/lib/auth';
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   const { id } = await params;
   const body = await req.json();
 
@@ -31,7 +35,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   return corsResponse(result[0]);
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   const { id } = await params;
   await query('DELETE FROM projects WHERE id = $1', [parseInt(id)]);
   revalidatePath('/');

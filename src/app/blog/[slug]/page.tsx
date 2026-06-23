@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useApp, type PageSection } from '@/app/AppContext'
+import { transformKeys } from '@/lib/transform'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -41,7 +42,7 @@ useEffect(() => {
       .then(r => r.json())
       .then(data => {
         if (data.error) return
-        setPost(data)
+        setPost(transformKeys<PostData>(data))
       })
       .catch(() => {})
       .finally(() => setLoading(false))

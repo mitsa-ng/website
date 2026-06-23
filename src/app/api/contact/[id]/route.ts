@@ -1,7 +1,11 @@
 import { query } from '@/db';
 import { corsResponse } from '@/lib/cors';
+import { requireAdmin } from '@/lib/auth';
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     const result = await query<any>('SELECT * FROM contacts WHERE id = $1', [Number(id)]);
@@ -12,7 +16,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
   try {
     const { id } = await params;
     await query('DELETE FROM contacts WHERE id = $1', [Number(id)]);
@@ -22,10 +28,12 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function PATCH(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
   try {
     const { id } = await params;
-    const body = await _req.json();
+    const body = await req.json();
     const sets = Object.entries(body).map(([k, v], i) => `${k} = $${i + 2}`).join(', ');
     const values = Object.values(body);
     await query(`UPDATE contacts SET ${sets} WHERE id = $1`, [Number(id), ...values]);

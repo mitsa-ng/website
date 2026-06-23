@@ -1,6 +1,7 @@
 import { query } from '@/db';
 import { revalidatePath } from 'next/cache';
 import { corsResponse } from '@/lib/cors';
+import { requireAdmin } from '@/lib/auth';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -13,6 +14,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   const body = await req.json();
   const { titleZh, titleEn, descriptionZh, descriptionEn, price, featured, draft, published, sortOrder } = body;
 

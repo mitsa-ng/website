@@ -1,7 +1,11 @@
 import { query } from '@/db';
 import { corsResponse } from '@/lib/cors';
+import { requireAdmin } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   try {
     const data = await query<any>('SELECT * FROM contacts ORDER BY created_at DESC');
     return corsResponse(data);

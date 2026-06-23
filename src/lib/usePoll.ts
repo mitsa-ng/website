@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { transformKeys } from './transform'
 
 export function usePoll<T = unknown>(url: string, intervalMs = 30_000) {
   const [data, setData] = useState<T | null>(null)
@@ -13,7 +14,7 @@ export function usePoll<T = unknown>(url: string, intervalMs = 30_000) {
       setLoading(true)
       fetch(url)
         .then(r => r.json())
-        .then(d => { if (!cancelled && (!d.error || Array.isArray(d))) setData(d) })
+        .then(d => { if (!cancelled && (!d.error || Array.isArray(d))) setData(transformKeys<T>(d)) })
         .catch(() => {})
         .finally(() => { if (!cancelled) setLoading(false) })
     }

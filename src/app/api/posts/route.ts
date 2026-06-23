@@ -1,14 +1,21 @@
 import { query } from '@/db';
 import { corsResponse } from '@/lib/cors';
+import { requireAdmin } from '@/lib/auth';
 
-export async function GET() {
-  const posts = await query<any>(
-    'SELECT * FROM posts ORDER BY created_at DESC'
-  );
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const includeDrafts = searchParams.get('drafts') === 'true';
+
+  const posts = includeDrafts
+    ? await query<any>('SELECT * FROM posts ORDER BY created_at DESC')
+    : await query<any>('SELECT * FROM posts WHERE published = true AND draft = false ORDER BY created_at DESC');
   return corsResponse(posts);
 }
 
 export async function POST(req: Request) {
+  const authError = await requireAdmin(req);
+  if (authError) return authError;
+
   const body = await req.json();
   const { slug, titleZh, titleEn, excerptZh, excerptEn, contentZh, contentEn, draft, published, publishAt } = body;
 
