@@ -12,8 +12,17 @@ export default function HeroSection() {
   useEffect(() => { getAboutContent().then(setAbout) }, [])
   const a = about
 
+  const bgStyle: React.CSSProperties | undefined =
+    a?.heroBgImage || a?.heroBgColor
+      ? {
+          background: a?.heroBgImage
+            ? `url(${a.heroBgImage}) center/cover ${a?.heroBgColor || '#000'}`
+            : a?.heroBgColor,
+        }
+      : undefined
+
   return (
-    <div className="hero-dark">
+    <div className="hero-dark" style={bgStyle}>
       <Reveal>
         {a?.avatarUrl ? (
           <div className="avatar-img" style={{ backgroundImage: `url(${a.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '50%', width: 80, height: 80, margin: '0 auto' }} />

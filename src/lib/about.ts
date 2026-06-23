@@ -8,6 +8,8 @@ export interface AboutContent {
   subtitleEn: string
   bioZh: string
   bioEn: string
+  heroBgColor: string
+  heroBgImage: string
   stats: { id: string; num: string; labelZh: string; labelEn: string }[]
   skillsZh: string[]
   skillsEn: string[]
