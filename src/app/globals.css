@@ -163,8 +163,8 @@ a:focus-visible{outline:4px solid color-mix(in oklab,var(--accent),transparent 6
 .hero-dark{background:#000;color:#fff;padding:var(--section-y-phone) var(--space-5) var(--space-8);text-align:center;transition:background var(--motion-base)}
 .hero-dark .avatar-mono{width:80px;height:80px;border-radius:50%;background:var(--fg-2);margin:0 auto var(--space-4);display:grid;place-items:center;font-size:26px;font-weight:700;font-family:var(--font-display);color:#fff;letter-spacing:-0.02em;border:1px solid rgba(255,255,255,0.12)}
 .hero-dark h1{font-size:32px;font-weight:600;font-family:var(--font-display);letter-spacing:0.128px;line-height:1.09;margin-bottom:4px}
-.hero-dark .subtitle{font-size:17px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:-0.374px;margin-bottom:var(--space-4)}
-.hero-dark .bio{font-size:15px;font-weight:400;color:rgba(255,255,255,0.72);max-width:340px;margin:0 auto;line-height:1.47;letter-spacing:-0.224px}
+.hero-dark .subtitle{font-size:17px;font-weight:400;color:inherit;opacity:.6;letter-spacing:-0.374px;margin-bottom:var(--space-4)}
+.hero-dark .bio{font-size:15px;font-weight:400;color:inherit;opacity:.72;max-width:340px;margin:0 auto;line-height:1.47;letter-spacing:-0.224px}
 .content-light{padding:var(--space-5);background:var(--surface);transition:background var(--motion-base)}
 .content-white{padding:var(--space-5);background:var(--bg);transition:background var(--motion-base)}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-bottom:var(--space-8)}

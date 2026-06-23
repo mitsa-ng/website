@@ -21,8 +21,10 @@ export default function HeroSection() {
         }
       : undefined
 
+  const textColor = a?.heroTextColor || undefined
+
   return (
-    <div className="hero-dark" style={bgStyle}>
+    <div className="hero-dark" style={{ ...bgStyle, color: textColor }}>
       <Reveal>
         {a?.avatarUrl ? (
           <div className="avatar-img" style={{ backgroundImage: `url(${a.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '50%', width: 80, height: 80, margin: '0 auto' }} />

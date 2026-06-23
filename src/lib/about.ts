@@ -10,6 +10,7 @@ export interface AboutContent {
   bioEn: string
   heroBgColor: string
   heroBgImage: string
+  heroTextColor: string
   stats: { id: string; num: string; labelZh: string; labelEn: string }[]
   skillsZh: string[]
   skillsEn: string[]
