@@ -1,6 +1,8 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useApp, type PageSection } from '../AppContext'
+import { transformKeys } from '@/lib/transform'
 
 const SECTIONS: { key: PageSection }[] = [
   { key: 'about' },
@@ -13,6 +15,15 @@ const SECTIONS: { key: PageSection }[] = [
 
 export default function NavDesktop() {
   const { dict, activePage, setActivePage, setDrawerOpen, toggleTheme, theme, locale, setLocale } = useApp()
+  const [brand, setBrand] = useState('')
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(d => transformKeys(d) as Record<string, any>)
+      .then(d => { if (d.brandText) setBrand(d.brandText) })
+      .catch(() => {})
+  }, [])
 
   const labels: Record<PageSection, string> = {
     about: dict.nav.about,
@@ -26,8 +37,7 @@ export default function NavDesktop() {
   return (
     <div className="nav-desktop">
       <div className="brand">
-        <div className="brand-mono">P</div>
-        Personal Web
+        {brand || 'Personal Web'}
       </div>
       <div className="nav-links">
         {SECTIONS.map(s => (
