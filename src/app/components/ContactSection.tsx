@@ -1,16 +1,33 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useApp } from '../AppContext'
+import { transformKeys } from '@/lib/transform'
 import Reveal from './Reveal'
 
+interface SiteSettings {
+  contact_email: string
+  contact_location_zh: string
+  contact_location_en: string
+  contact_reply_time_zh: string
+  contact_reply_time_en: string
+}
+
 export default function ContactSection() {
-  const { dict } = useApp()
+  const { dict, locale } = useApp()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
   const { showToast } = useApp()
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(d => setSettings(transformKeys<SiteSettings>(d)))
+      .catch(() => {})
+  }, [])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -35,7 +52,13 @@ export default function ContactSection() {
     }
   }
 
-  const contactInfo = dict.contact.info as Record<string, string>
+  const contactLabels = locale === 'zh-TW'
+    ? { email: 'Email', location: '地點', replyTime: '回覆時間' }
+    : { email: 'Email', location: 'Location', replyTime: 'Reply Time' }
+
+  const contactEmail = settings?.contactEmail || 'xingencai060@gmail.com'
+  const contactLocation = locale === 'zh-TW' ? settings?.contactLocationZh : settings?.contactLocationEn
+  const contactReplyTime = locale === 'zh-TW' ? settings?.contactReplyTimeZh : settings?.contactReplyTimeEn
 
   return (
     <>
@@ -45,12 +68,18 @@ export default function ContactSection() {
       <div className="contact-content">
         <Reveal>
           <div className="contact-info">
-            {Object.entries(contactInfo).map(([key, val]) => (
-              <div className="row" key={key}>
-                <span className="row-label">{key}</span>
-                <span className="row-value">{val}</span>
-              </div>
-            ))}
+            <div className="row">
+              <span className="row-label">{contactLabels.email}</span>
+              <span className="row-value">{contactEmail}</span>
+            </div>
+            <div className="row">
+              <span className="row-label">{contactLabels.location}</span>
+              <span className="row-value">{contactLocation || 'Taiwan'}</span>
+            </div>
+            <div className="row">
+              <span className="row-label">{contactLabels.replyTime}</span>
+              <span className="row-value">{contactReplyTime || (locale === 'zh-TW' ? '最快 24 小時內回覆' : 'Replies within 24h')}</span>
+            </div>
           </div>
         </Reveal>
 
