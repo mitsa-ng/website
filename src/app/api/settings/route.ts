@@ -21,12 +21,14 @@ export async function PUT(req: Request) {
 
   try {
     const body = await req.json();
-    const allowed = ['contact_email', 'contact_location_zh', 'contact_location_en', 'contact_reply_time_zh', 'contact_reply_time_en'];
+    const allowed = ['contact_email', 'contact_location_zh', 'contact_location_en', 'contact_reply_time_zh', 'contact_reply_time_en', 'about_content'];
     for (const [key, value] of Object.entries(body)) {
       if (allowed.includes(key)) {
+        const sqlValue = typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value);
+        const cast = typeof value === 'object' && value !== null ? '::jsonb' : '';
         await query(
-          `INSERT INTO site_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2`,
-          [key, String(value)]
+          `INSERT INTO site_settings (key, value) VALUES ($1, $2${cast}) ON CONFLICT (key) DO UPDATE SET value = $2${cast}`,
+          [key, sqlValue]
         );
       }
     }
