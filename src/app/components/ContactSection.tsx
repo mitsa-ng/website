@@ -6,11 +6,11 @@ import { transformKeys } from '@/lib/transform'
 import Reveal from './Reveal'
 
 interface SiteSettings {
-  contact_email: string
-  contact_location_zh: string
-  contact_location_en: string
-  contact_reply_time_zh: string
-  contact_reply_time_en: string
+  contactEmail: string
+  contactLocationZh: string
+  contactLocationEn: string
+  contactReplyTimeZh: string
+  contactReplyTimeEn: string
 }
 
 export default function ContactSection() {
