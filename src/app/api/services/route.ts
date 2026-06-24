@@ -18,13 +18,13 @@ export async function POST(req: Request) {
   if (authError) return authError;
 
   const body = await req.json();
-  const { titleZh, titleEn, descriptionZh, descriptionEn, price, featured, draft, published, sortOrder } = body;
+  const { titleZh, titleEn, descriptionZh, descriptionEn, price, icon, featured, draft, published, sortOrder } = body;
 
   const result = await query<any>(
-    `INSERT INTO services (title_zh, title_en, description_zh, description_en, price, featured, draft, published, sort_order)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `INSERT INTO services (title_zh, title_en, description_zh, description_en, price, icon, featured, draft, published, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING *`,
-    [titleZh, titleEn, descriptionZh || '', descriptionEn || '', price || '', featured ?? false, draft ?? true, published ?? false, sortOrder ?? 0]
+    [titleZh, titleEn, descriptionZh || '', descriptionEn || '', price || '', icon || '', featured ?? false, draft ?? true, published ?? false, sortOrder ?? 0]
   );
 
   revalidatePath('/');

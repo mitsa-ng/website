@@ -11,6 +11,7 @@ interface Service {
   descriptionZh: string
   descriptionEn: string
   price: string
+  icon: string
 }
 
 export default function ServicesSection() {
@@ -29,7 +30,7 @@ export default function ServicesSection() {
         {(services || []).map((s, i) => (
           <Reveal key={s.id} delay={i % 2}>
             <div className="service-card">
-              <div className="icon-box"><span>{i + 1}</span></div>
+              <div className="icon-box"><span>{s.icon || i + 1}</span></div>
               <h3>{s[titleKey]}</h3>
               <p>{s[descKey]}</p>
               <div className="price">{s.price}</div>

@@ -56,6 +56,7 @@ export const services = pgTable('services', {
   descriptionZh: text('description_zh').notNull().default(''),
   descriptionEn: text('description_en').notNull().default(''),
   price: text('price').notNull().default(''),
+  icon: text('icon').notNull().default(''),
 
   featured: boolean('featured').default(false),
   published: boolean('published').default(false),
