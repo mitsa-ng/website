@@ -290,6 +290,7 @@ a:focus-visible{outline:4px solid color-mix(in oklab,var(--accent),transparent 6
   .blog-detail::before{content:'';position:fixed;inset:0;background:var(--overlay);z-index:-1;opacity:0;transition:opacity .3s var(--ease-standard);pointer-events:none}
   .blog-detail.open::before{opacity:1;pointer-events:auto}
   .blog-detail-body{padding:var(--space-6) var(--space-8)}
+  .blog-page-body{padding:var(--space-6) var(--space-8)}
   .blog-detail-header{padding:var(--space-4) var(--space-6);padding-top:calc(var(--safe-t) + var(--space-4))}
   .toast{bottom:40px}
 }
@@ -313,13 +314,13 @@ a:focus-visible{outline:4px solid color-mix(in oklab,var(--accent),transparent 6
 .skeleton-icon { height: 40px; width: 40px; border-radius: 50%; margin-bottom: 12px; }
 .skeleton-price { height: 16px; margin-top: 8px; }
 
-.blog-page{min-height:100dvh;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.blog-page{height:100dvh;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .blog-page-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-5);padding-top:calc(var(--safe-t) + var(--space-4));border-bottom:1px solid var(--border-soft);position:sticky;top:0;background:var(--bg);z-index:2}
 .blog-page-header button{width:36px;height:36px;border:0;background:var(--surface);border-radius:50%;cursor:pointer;display:grid;place-items:center;color:var(--fg-2)}
 .blog-page-header button:active{background:var(--border)}
 .blog-page-header button svg{width:20px;height:20px;fill:currentColor}
 .blog-page-header span{font-size:15px;font-weight:600;color:var(--fg)}
-.blog-page-body{padding:var(--space-5);flex:1;max-width:720px;margin:0 auto;width:100%}
+.blog-page-body{padding:var(--space-5);padding-bottom:calc(var(--space-5) + var(--tab-h) + var(--tab-gap));flex:1;max-width:720px;margin:0 auto;width:100%}
 .blog-page-body .date{font-size:12px;color:var(--meta);font-weight:500;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:var(--space-2)}
 .blog-page-body h1{font-size:28px;font-weight:600;font-family:var(--font-display);letter-spacing:0.196px;line-height:1.14;margin-bottom:var(--space-4)}
 
