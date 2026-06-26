@@ -21,7 +21,7 @@ export async function PUT(req: Request) {
 
   try {
     const body = await req.json();
-    const allowed = ['contact_email', 'contact_location_zh', 'contact_location_en', 'contact_reply_time_zh', 'contact_reply_time_en', 'about_content', 'brand_text'];
+    const allowed = ['contact_email', 'contact_location_zh', 'contact_location_en', 'contact_reply_time_zh', 'contact_reply_time_en', 'about_content', 'brand_text', 'fingerprint_enabled', 'fingerprint_method', 'fingerprint_public_key'];
     for (const [key, value] of Object.entries(body)) {
       if (allowed.includes(key)) {
         const sqlValue = JSON.stringify(value);

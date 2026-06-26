@@ -27,6 +27,9 @@ export const posts = pgTable('posts', {
   publishAt: timestamp('publish_at'),
 
   createdAt: timestamp('created_at').defaultNow(),
+  fingerprintZh: text('fingerprint_zh'),
+  fingerprintEn: text('fingerprint_en'),
+
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
@@ -39,6 +42,7 @@ export const projects = pgTable('projects', {
   descriptionEn: text('description_en').notNull().default(''),
   tags: jsonb('tags').$type<string[]>().default([]),
   link: text('link'),
+  imageUrl: text('image_url'),
 
   draft: boolean('draft').default(true),
   published: boolean('published').default(false),
