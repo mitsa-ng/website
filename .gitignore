@@ -1,0 +1,25 @@
+node_modules/
+.pnp
+.pnp.js
+
+.env
+.env.local
+.env.development
+.env.production
+
+.next/
+dist/
+dist-electron/
+release/
+.turbo/
+
+*.tsbuildinfo
+next-env.d.ts
+
+.DS_Store
+*.log
+
+.vercel
+
+# 獨立開源專案，有自已的 git 歷史
+open-design/

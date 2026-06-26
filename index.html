@@ -1,0 +1,2777 @@
+<!doctype html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#f5f5f7" id="themeColor" />
+  <title>幸恩 - 個人品牌</title>
+  <style>
+    /* ===========================================================
+   Apple Design System — token bindings
+   Source: design-systems/apple/tokens.css
+   =========================================================== */
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-warm: #fbfbfd;
+      --fg: #1d1d1f;
+      --fg-2: #424245;
+      --muted: #6e6e73;
+      --meta: #86868b;
+      --border: #d2d2d7;
+      --border-soft: #e8e8ed;
+      --accent: #0071e3;
+      --accent-on: #ffffff;
+      --accent-hover: #0077ed;
+      --accent-active: #0066cc;
+      --font-display: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-body: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-pill: 980px;
+      --elev-ring: 0 0 0 1px var(--border);
+      --elev-raised: 0 12px 32px rgba(0, 0, 0, 0.08);
+      --ease-standard: cubic-bezier(0.28, 0, 0.22, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --motion-base: 220ms;
+      --section-y-phone: 40px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --container-max: 1024px;
+      --tab-gap: max(16px, var(--safe-b));
+      --tab-h: 64px;
+      --status-h: 48px;
+      --drawer-w: 280px;
+      --splash-bg: #000;
+      --overlay: rgba(0, 0, 0, 0.40);
+      --toast-bg: #1d1d1f;
+      --toast-fg: #fff;
+    }
+
+    [data-theme="dark"] {
+      --bg: #000000;
+      --surface: #1d1d1f;
+      --surface-warm: #262629;
+      --fg: #f5f5f7;
+      --fg-2: #a1a1a6;
+      --muted: #6e6e73;
+      --meta: #86868b;
+      --border: #424245;
+      --border-soft: #2a2a2c;
+      --elev-raised: 0 12px 40px rgba(0, 0, 0, 0.6);
+      --overlay: rgba(0, 0, 0, 0.60);
+      --toast-bg: #f5f5f7;
+      --toast-fg: #1d1d1f;
+      --splash-bg: #000;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--surface);
+      color: var(--fg);
+      font: 17px/1.47 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.374px
+    }
+
+    body {
+      padding-top: var(--status-h);
+      padding-bottom: calc(var(--tab-h) + var(--tab-gap))
+    }
+
+    img {
+      display: block;
+      max-width: 100%
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+      color: inherit
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: #fff
+    }
+
+    /* ─── Status bar ────────────────────────────────────────── */
+    .app-status {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--status-h);
+      padding-top: var(--safe-t);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-inline: 20px;
+      z-index: 100;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid var(--border-soft);
+      transition: background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard)
+    }
+
+    .app-status time {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--fg);
+      font-weight: 700;
+      transition: color var(--motion-base)
+    }
+
+    .app-status .menu-btn {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      color: var(--fg);
+      margin-left: auto;
+      transition: opacity .15s;
+      border-radius: 8px
+    }
+
+    .app-status .menu-btn:active {
+      opacity: .5
+    }
+
+    .app-status .menu-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor
+    }
+
+    /* ─── Splash screen ─────────────────────────────────────── */
+    .splash {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--splash-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .5s var(--ease-standard);
+      pointer-events: auto
+    }
+
+    .splash.hidden {
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .splash .mark {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: var(--accent);
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      transform: scale(0.8);
+      animation: splash-pop .6s var(--ease-spring) forwards
+    }
+
+    @keyframes splash-pop {
+      to {
+        transform: scale(1)
+      }
+    }
+
+    .splash .mark span {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-display)
+    }
+
+    .splash p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: -0.224px;
+      opacity: 0;
+      animation: splash-fade .4s .3s var(--ease-standard) forwards
+    }
+
+    @keyframes splash-fade {
+      to {
+        opacity: 1
+      }
+    }
+
+    /* ─── Drawer overlay ────────────────────────────────────── */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      background: var(--overlay);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s var(--ease-standard)
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: var(--drawer-w);
+      z-index: 160;
+      background: var(--bg);
+      transform: translateX(100%);
+      transition: transform .4s var(--ease-spring), background var(--motion-base) var(--ease-standard);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12)
+    }
+
+    [data-theme="dark"] .drawer {
+      box-shadow: -8px 0 48px rgba(0, 0, 0, 0.55)
+    }
+
+    .drawer.open {
+      transform: translateX(0)
+    }
+
+    .drawer-handle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-5);
+      padding-top: calc(var(--safe-t) + var(--space-5))
+    }
+
+    .drawer-handle h3 {
+      font-size: 19px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.228px
+    }
+
+    .drawer-handle button {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: var(--surface);
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--fg-2);
+      transition: background .15s
+    }
+
+    .drawer-handle button:active {
+      background: var(--border)
+    }
+
+    .drawer-handle button svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor
+    }
+
+    .drawer-items {
+      flex: 1;
+      padding: 0 var(--space-3) var(--space-5)
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-3);
+      border-radius: var(--radius-md);
+      border: 0;
+      background: transparent;
+      width: 100%;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--fg);
+      transition: background .15s;
+      min-height: 48px;
+      text-align: left
+    }
+
+    .drawer-item:active {
+      background: var(--border-soft)
+    }
+
+    .drawer-item svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+      flex-shrink: 0
+    }
+
+    .drawer-item .label {
+      flex: 1
+    }
+
+    .drawer-item .toggle {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      background: var(--border);
+      border-radius: 13px;
+      transition: background .2s;
+      flex-shrink: 0
+    }
+
+    .drawer-item .toggle.on {
+      background: var(--accent)
+    }
+
+    .drawer-item .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform .2s var(--ease-spring);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15)
+    }
+
+    .drawer-item .toggle.on::after {
+      transform: translateX(18px)
+    }
+
+    .drawer-item .lang-badge {
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface);
+      padding: 3px 10px;
+      border-radius: 999px;
+      color: var(--muted)
+    }
+
+    .drawer-divider {
+      height: 1px;
+      background: var(--border-soft);
+      margin: var(--space-2) var(--space-3)
+    }
+
+    /* ─── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: calc(var(--tab-h) + var(--tab-gap) + 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      z-index: 190;
+      background: var(--toast-bg);
+      color: var(--toast-fg);
+      padding: 14px 24px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.224px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      transition: transform .35s var(--ease-spring), opacity .35s var(--ease-standard);
+      pointer-events: none;
+      white-space: nowrap
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1
+    }
+
+    /* ─── Blog detail overlay ────────────────────────────────── */
+    .blog-detail {
+      position: fixed;
+      inset: 0;
+      z-index: 140;
+      background: var(--bg);
+      transform: translateY(100%);
+      transition: transform .4s var(--ease-spring), background var(--motion-base) var(--ease-standard);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column
+    }
+
+    .blog-detail.open {
+      transform: translateY(0)
+    }
+
+    .blog-detail-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      padding-top: calc(var(--safe-t) + var(--space-4));
+      border-bottom: 1px solid var(--border-soft);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 2
+    }
+
+    .blog-detail-header button {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: var(--surface);
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--fg-2)
+    }
+
+    .blog-detail-header button:active {
+      background: var(--border)
+    }
+
+    .blog-detail-header button svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor
+    }
+
+    .blog-detail-header span {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--fg)
+    }
+
+    .blog-detail-body {
+      padding: var(--space-5);
+      flex: 1
+    }
+
+    .blog-detail-body .date {
+      font-size: 12px;
+      color: var(--meta);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-2)
+    }
+
+    .blog-detail-body h1 {
+      font-size: 28px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.196px;
+      line-height: 1.14;
+      margin-bottom: var(--space-4)
+    }
+
+    .blog-detail-body .hero {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      display: grid;
+      place-items: center;
+      margin-bottom: var(--space-5);
+      color: var(--meta);
+      font-size: 14px
+    }
+
+    .blog-detail-body p {
+      font-size: 17px;
+      line-height: 1.7;
+      margin-bottom: var(--space-4);
+      color: var(--fg)
+    }
+
+    .blog-detail-body h2 {
+      font-size: 22px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: -0.02em;
+      margin: var(--space-8) 0 var(--space-3)
+    }
+
+    .blog-detail-body blockquote {
+      margin: var(--space-5) 0;
+      padding: var(--space-4) var(--space-5);
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--accent);
+      font-size: 17px;
+      font-style: italic;
+      color: var(--fg-2);
+      line-height: 1.6
+    }
+
+    /* ─── Scroll reveal ─────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .5s var(--ease-standard), transform .5s var(--ease-standard)
+    }
+
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    .reveal-delay-1 {
+      transition-delay: .05s
+    }
+
+    .reveal-delay-2 {
+      transition-delay: .12s
+    }
+
+    .reveal-delay-3 {
+      transition-delay: .2s
+    }
+
+    .reveal-delay-4 {
+      transition-delay: .28s
+    }
+
+    /* ─── Page container ────────────────────────────────────── */
+    .page-view {
+      position: relative;
+      height: 100%;
+      overflow: hidden
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 0;
+      opacity: 0;
+      transform: translateX(32px);
+      transition: opacity .4s var(--ease-spring), transform .4s var(--ease-spring);
+      pointer-events: none;
+      scroll-behavior: smooth
+    }
+
+    .page.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto
+    }
+
+    .page.exit {
+      opacity: 0;
+      transform: translateX(-24px)
+    }
+
+    .page::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .page::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px
+    }
+
+    /* ─── Bottom tabs ───────────────────────────────────────── */
+    .app-tabs {
+      position: fixed;
+      bottom: var(--tab-gap);
+      left: 12px;
+      right: 12px;
+      height: calc(var(--tab-h) + var(--safe-b));
+      padding-bottom: var(--safe-b);
+      background: rgba(255, 255, 255, 0.65);
+      -webkit-backdrop-filter: blur(32px) saturate(1.4);
+      backdrop-filter: blur(32px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      display: flex;
+      z-index: 100;
+      overflow: hidden;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      width: auto;
+      transition: background var(--motion-base), border-color var(--motion-base)
+    }
+
+    [data-theme="dark"] .app-tabs {
+      background: rgba(29, 29, 31, 0.75);
+      border-color: rgba(255, 255, 255, 0.06)
+    }
+
+    [data-theme="dark"] .card-surface,
+    [data-theme="dark"] .card-white,
+    [data-theme="dark"] .project-card,
+    [data-theme="dark"] .blog-card,
+    [data-theme="dark"] .service-card,
+    [data-theme="dark"] .stat-card {
+      background: var(--bg)
+    }
+
+    .app-tabs button {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: color .15s;
+      min-height: 44px;
+      padding: 6px 0 4px;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    .app-tabs button svg {
+      width: 25px;
+      height: 25px;
+      fill: currentColor;
+      transition: fill .15s
+    }
+
+    .app-tabs button.active {
+      color: var(--accent);
+      font-weight: 600
+    }
+
+    .app-tabs button.active svg {
+      fill: var(--accent)
+    }
+
+    .app-tabs button span {
+      line-height: 1.15;
+      margin-top: 1px
+    }
+
+    /* ─── Components ─────────────────────────────────────────── */
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: var(--space-3);
+      text-transform: uppercase
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: background var(--motion-base), border-color var(--motion-base), box-shadow var(--motion-base)
+    }
+
+    .card-surface {
+      background: var(--surface);
+      border: 1px solid var(--border-soft)
+    }
+
+    .card-white {
+      background: var(--bg);
+      border: 1px solid var(--border-soft)
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.224px;
+      background: var(--border-soft);
+      color: var(--fg-2);
+      transition: background var(--motion-base), color var(--motion-base)
+    }
+
+    .pill-accent {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 28px;
+      border-radius: var(--radius-pill);
+      font-size: 15px;
+      font-weight: 600;
+      border: 0;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.224px
+    }
+
+    .btn:active {
+      transform: scale(.96)
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-on)
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover)
+    }
+
+    .btn-dark {
+      background: var(--fg);
+      color: var(--bg)
+    }
+
+    .btn-dark:hover {
+      opacity: .9
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--accent)
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--accent-on)
+    }
+
+    .btn-block {
+      width: 100%
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: var(--space-4)
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: -0.12px
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      background: var(--surface-warm);
+      transition: border-color .2s var(--ease-standard), background var(--motion-base);
+      outline: none;
+      min-height: 44px;
+      color: var(--fg)
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--muted)
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent), transparent 65%)
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+      border-radius: var(--radius-md)
+    }
+
+    .btn:focus-visible {
+      outline: 4px solid color-mix(in oklab, var(--accent), transparent 65%);
+      outline-offset: 2px;
+      border-radius: var(--radius-pill)
+    }
+
+    a:focus-visible {
+      outline: 4px solid color-mix(in oklab, var(--accent), transparent 65%);
+      outline-offset: 2px;
+      border-radius: 2px
+    }
+
+    /* ─── About page ────────────────────────────────────────── */
+    .hero-dark {
+      background: #000;
+      color: #fff;
+      padding: var(--section-y-phone) var(--space-5) var(--space-8);
+      text-align: center;
+      transition: background var(--motion-base)
+    }
+
+    .hero-dark .avatar-mono {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--fg-2);
+      margin: 0 auto var(--space-4);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      color: #fff;
+      letter-spacing: -0.02em;
+      border: 1px solid rgba(255, 255, 255, 0.12)
+    }
+
+    .hero-dark h1 {
+      font-size: 32px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.128px;
+      line-height: 1.09;
+      margin-bottom: 4px
+    }
+
+    .hero-dark .subtitle {
+      font-size: 17px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: -0.374px;
+      margin-bottom: var(--space-4)
+    }
+
+    .hero-dark .bio {
+      font-size: 15px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.72);
+      max-width: 340px;
+      margin: 0 auto;
+      line-height: 1.47;
+      letter-spacing: -0.224px
+    }
+
+    .content-light {
+      padding: var(--space-5);
+      background: var(--surface);
+      transition: background var(--motion-base)
+    }
+
+    .content-white {
+      padding: var(--space-5);
+      background: var(--bg);
+      transition: background var(--motion-base)
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-3);
+      margin-bottom: var(--space-8)
+    }
+
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      text-align: center;
+      transition: background var(--motion-base), border-color var(--motion-base)
+    }
+
+    .stat-card .num {
+      font-size: 28px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      color: var(--fg);
+      letter-spacing: -0.144px;
+      line-height: 1.08;
+      margin-bottom: 2px;
+      transition: color var(--motion-base)
+    }
+
+    .stat-card .label {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: -0.12px
+    }
+
+    .skill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-8)
+    }
+
+    .skill-grid .pill {
+      font-size: 13px;
+      padding: 5px 14px
+    }
+
+    .timeline {
+      position: relative;
+      padding: 0 0 0 20px
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      bottom: 6px;
+      width: 1px;
+      background: var(--border);
+      transition: background var(--motion-base)
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 var(--space-5) var(--space-4)
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -17px;
+      top: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--surface);
+      transition: border-color var(--motion-base)
+    }
+
+    .timeline-item .period {
+      font-size: 12px;
+      color: var(--meta);
+      font-weight: 500;
+      letter-spacing: -0.12px;
+      margin-bottom: 2px;
+      text-transform: uppercase
+    }
+
+    .timeline-item h3 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.374px;
+      margin-bottom: 1px
+    }
+
+    .timeline-item .org {
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: -0.224px
+    }
+
+    /* ─── Portfolio page ────────────────────────────────────── */
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      background: var(--surface);
+      transition: background var(--motion-base)
+    }
+
+    .project-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: background var(--motion-base), border-color var(--motion-base), transform .2s
+    }
+
+    .project-card:active {
+      transform: scale(.98)
+    }
+
+    .project-card .thumb {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      transition: background var(--motion-base)
+    }
+
+    .project-card .thumb svg {
+      width: 100%;
+      height: 100%;
+      display: block
+    }
+
+    .project-card .body {
+      padding: var(--space-4) var(--space-5) var(--space-5)
+    }
+
+    .project-card h3 {
+      font-size: 19px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.228px;
+      line-height: 1.21;
+      margin-bottom: 4px
+    }
+
+    .project-card p {
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: -0.224px;
+      line-height: 1.47;
+      margin-bottom: var(--space-3);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px
+    }
+
+    .project-tags .pill {
+      font-size: 12px;
+      padding: 3px 12px
+    }
+
+    .project-card .thumb .img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: var(--meta);
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    /* ─── Blog page ─────────────────────────────────────────── */
+    .blog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: var(--space-5);
+      background: var(--surface);
+      transition: background var(--motion-base)
+    }
+
+    .blog-card {
+      display: block;
+      padding: var(--space-5);
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-3);
+      transition: border-color .2s, background var(--motion-base)
+    }
+
+    .blog-card:active {
+      border-color: var(--accent)
+    }
+
+    .blog-card .date {
+      font-size: 12px;
+      color: var(--meta);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 3px;
+      text-transform: uppercase
+    }
+
+    .blog-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.374px;
+      line-height: 1.24;
+      margin-bottom: 4px
+    }
+
+    .blog-card p {
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: -0.224px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: var(--space-3);
+      line-height: 1.47
+    }
+
+    .blog-card .read-more {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent)
+    }
+
+    /* ─── Services page ─────────────────────────────────────── */
+    .services-grid {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      background: var(--surface);
+      transition: background var(--motion-base)
+    }
+
+    .service-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      transition: background var(--motion-base), border-color var(--motion-base)
+    }
+
+    .service-card .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--border-soft);
+      display: grid;
+      place-items: center;
+      margin: 0 auto var(--space-4);
+      transition: background var(--motion-base)
+    }
+
+    .service-card .icon-box span {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--fg-2);
+      font-family: var(--font-display);
+      letter-spacing: -0.02em;
+      transition: color var(--motion-base)
+    }
+
+    .service-card h3 {
+      font-size: 19px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.228px;
+      margin-bottom: 6px
+    }
+
+    .service-card p {
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: -0.224px;
+      margin-bottom: var(--space-4);
+      line-height: 1.47
+    }
+
+    .service-card .price {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      color: var(--fg);
+      letter-spacing: -0.144px;
+      line-height: 1.08;
+      margin-bottom: var(--space-4);
+      transition: color var(--motion-base)
+    }
+
+    .service-card .price small {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: -0.224px
+    }
+
+    /* ─── Resume page ───────────────────────────────────────── */
+    .resume-content {
+      padding: var(--space-5);
+      background: var(--surface);
+      transition: background var(--motion-base)
+    }
+
+    .resume-section {
+      margin-bottom: var(--space-8)
+    }
+
+    .resume-section h2 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--meta);
+      margin-bottom: var(--space-4)
+    }
+
+    .resume-section .timeline {
+      margin-left: -4px;
+      padding-left: 24px
+    }
+
+    .resume-section .timeline::before {
+      left: 9px
+    }
+
+    .resume-section .timeline-item::before {
+      left: -19px
+    }
+
+    /* ─── Contact page ──────────────────────────────────────── */
+    .contact-content {
+      padding: var(--space-5);
+      background: var(--surface);
+      transition: background var(--motion-base)
+    }
+
+    .contact-info {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      transition: background var(--motion-base), border-color var(--motion-base)
+    }
+
+    .contact-info .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) 0
+    }
+
+    .contact-info .row+.row {
+      border-top: 1px solid var(--border-soft);
+      transition: border-color var(--motion-base)
+    }
+
+    .contact-info .row-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500
+    }
+
+    .contact-info .row-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--fg);
+      transition: color var(--motion-base)
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: center;
+      padding: var(--space-3) 0 var(--space-5)
+    }
+
+    .social-links a {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--fg-2);
+      transition: color .2s, border-color .2s, background var(--motion-base);
+      background: var(--bg)
+    }
+
+    .social-links a:hover {
+      color: var(--accent);
+      border-color: var(--accent)
+    }
+
+    .social-links a svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor
+    }
+
+    .contact-form-wrap {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      transition: background var(--motion-base), border-color var(--motion-base)
+    }
+
+    /* ─── Page headers ──────────────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: var(--space-5) var(--space-5) 0;
+      transition: background var(--motion-base)
+    }
+
+    .page-header h2 {
+      font-size: 28px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.196px;
+      line-height: 1.14
+    }
+
+    .page-header .count {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: -0.224px
+    }
+
+    /* ─── Desktop nav ────────────────────────────────────── */
+    .nav-desktop {
+      display: none
+    }
+
+    /* ─── Tablet (≥768px) ───────────────────────────────── */
+    @media(min-width:768px) {
+      .hero-dark {
+        padding: 80px var(--space-6) var(--space-8)
+      }
+
+      .hero-dark h1 {
+        font-size: 48px
+      }
+
+      .content-light,
+      .content-white {
+        padding: var(--space-6)
+      }
+
+      .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: var(--space-6);
+        gap: var(--space-5)
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: var(--space-6);
+        gap: var(--space-5)
+      }
+
+      .blog-list {
+        padding: var(--space-6);
+        gap: var(--space-4)
+      }
+
+      .service-card {
+        padding: var(--space-8) var(--space-6)
+      }
+
+      .resume-content {
+        padding: var(--space-6)
+      }
+
+      .contact-content {
+        padding: var(--space-6)
+      }
+
+      .page-header {
+        padding: var(--space-6) var(--space-6) 0
+      }
+
+      .stats-row {
+        gap: var(--space-4)
+      }
+
+      .stat-card {
+        padding: var(--space-5)
+      }
+
+      .stat-card .num {
+        font-size: 32px
+      }
+    }
+
+    /* ─── Desktop (≥1024px) ─────────────────────────────── */
+    @media(min-width:1024px) {
+      body {
+        padding-bottom: 0;
+        padding-top: 0
+      }
+
+      .app-status {
+        display: none
+      }
+
+      .app-tabs {
+        display: none
+      }
+
+      .nav-desktop {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 52px;
+        background: rgba(255, 255, 255, 0.88);
+        -webkit-backdrop-filter: blur(20px) saturate(1.4);
+        backdrop-filter: blur(20px) saturate(1.4);
+        border-bottom: 1px solid var(--border-soft);
+        z-index: 110;
+        align-items: center;
+        padding: 0 28px;
+        gap: 4px;
+        transition: background var(--motion-base), border-color var(--motion-base);
+      }
+
+      [data-theme="dark"] .nav-desktop {
+        background: rgba(0, 0, 0, 0.85);
+        border-color: var(--border);
+      }
+
+      .nav-desktop .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: auto;
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: -0.224px;
+        color: var(--fg);
+        cursor: default;
+      }
+
+      .nav-desktop .brand-mono {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: var(--accent);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .nav-desktop .nav-links {
+        display: flex;
+        gap: 2px;
+      }
+
+      .nav-desktop .nav-links button {
+        padding: 8px 16px;
+        border: 0;
+        background: transparent;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        cursor: pointer;
+        transition: color .15s, background .15s;
+        white-space: nowrap;
+        letter-spacing: -0.12px;
+        min-height: 36px;
+        font-family: var(--font-body);
+      }
+
+      .nav-desktop .nav-links button:hover {
+        color: var(--fg);
+        background: var(--border-soft)
+      }
+
+      .nav-desktop .nav-links button.active {
+        color: var(--accent);
+        font-weight: 600
+      }
+
+      .nav-desktop .menu-btn {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        background: transparent;
+        border-radius: 7px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        color: var(--fg-2);
+        margin-left: 4px;
+        transition: background .15s;
+      }
+
+      .nav-desktop .menu-btn:hover {
+        background: var(--border-soft)
+      }
+
+      .nav-desktop .menu-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor
+      }
+
+      .page-view {
+        height: 100vh
+      }
+
+      .page {
+        top: 52px
+      }
+
+      .hero-dark {
+        padding: 80px var(--space-8) var(--space-6)
+      }
+
+      .hero-dark .avatar-mono {
+        width: 96px;
+        height: 96px;
+        font-size: 30px
+      }
+
+      .hero-dark h1 {
+        font-size: 56px;
+        letter-spacing: -0.28px
+      }
+
+      .hero-dark .bio {
+        font-size: 17px;
+        max-width: 560px
+      }
+
+      .stats-row {
+        max-width: 480px;
+        margin: 0 auto var(--space-8);
+        gap: var(--space-5)
+      }
+
+      .stat-card .num {
+        font-size: 32px
+      }
+
+      .content-light,
+      .content-white {
+        padding: var(--space-8) var(--space-5)
+      }
+
+      .section-label {
+        max-width: var(--container-max);
+        margin: 0 auto var(--space-3)
+      }
+
+      .skill-grid {
+        max-width: var(--container-max);
+        margin: 0 auto var(--space-8)
+      }
+
+      .timeline {
+        max-width: var(--container-max);
+        margin: 0 auto
+      }
+
+      .page-header {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: var(--space-6) 0 0
+      }
+
+      .project-grid {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: var(--container-max);
+        margin: 0 auto
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: var(--container-max);
+        margin: 0 auto
+      }
+
+      .service-card {
+        padding: var(--space-8) var(--space-6)
+      }
+
+      .blog-list {
+        max-width: var(--container-max);
+        margin: 0 auto
+      }
+
+      .resume-content {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: var(--space-5) 0 var(--space-8)
+      }
+
+      .contact-content {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: var(--space-5) 0 var(--space-8)
+      }
+
+      .contact-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4)
+      }
+
+      .contact-info .row+.row {
+        border-top: none
+      }
+
+      .contact-info .row {
+        padding: var(--space-4) var(--space-5);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        background: var(--bg)
+      }
+
+      .blog-detail {
+        max-width: 720px;
+        left: 50% !important;
+        right: auto !important;
+        top: auto !important;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        transform: translateX(-50%) translateY(100%);
+        max-height: 85vh;
+        box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .blog-detail.open {
+        transform: translateX(-50%) translateY(0)
+      }
+
+      .blog-detail::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: var(--overlay);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity .3s var(--ease-standard);
+        pointer-events: none;
+      }
+
+      .blog-detail.open::before {
+        opacity: 1;
+        pointer-events: auto
+      }
+
+      .blog-detail-body {
+        padding: var(--space-6) var(--space-8)
+      }
+
+      .blog-detail-header {
+        padding: var(--space-4) var(--space-6);
+        padding-top: calc(var(--safe-t) + var(--space-4))
+      }
+
+      .toast {
+        bottom: 40px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Splash ──────────────────────────────────────── -->
+  <div class="splash" id="splash">
+    <div class="mark"><span>林</span></div>
+    <p data-i18n="splash_text">林小明 · 個人品牌</p>
+  </div>
+
+  <!-- ─── Toast ───────────────────────────────────────── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ─── Status bar ──────────────────────────────────── -->
+  <header class="app-status" role="banner">
+    <time>9:41</time>
+    <button class="menu-btn" aria-label="選單" id="menuBtn" data-i18n-aria="menu_aria">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- ─── Desktop nav ──────────────────────────────────── -->
+  <nav class="nav-desktop" role="navigation" aria-label="導航" data-i18n-aria="nav_aria">
+    <div class="brand">
+      <div class="brand-mono">林</div>
+      <span>林小明</span>
+    </div>
+    <div class="nav-links">
+      <button class="active" data-page="about" data-i18n="nav_about">關於</button>
+      <button data-page="portfolio" data-i18n="nav_portfolio">作品</button>
+      <button data-page="blog" data-i18n="nav_blog">文章</button>
+      <button data-page="services" data-i18n="nav_services">服務</button>
+      <button data-page="resume" data-i18n="nav_resume">履歷</button>
+      <button data-page="contact" data-i18n="nav_contact">聯絡</button>
+    </div>
+    <button class="menu-btn" id="menuBtnDesktop" aria-label="選單" data-i18n-aria="menu_aria">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- ─── Drawer overlay ───────────────────────────────── -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <!-- ─── Drawer ───────────────────────────────────────── -->
+  <aside class="drawer" id="drawer" role="dialog" aria-label="選單" data-i18n-aria="drawer_title">
+    <div class="drawer-handle">
+      <h3 data-i18n="drawer_title">選單</h3>
+      <button id="drawerClose" aria-label="關閉選單" data-i18n-aria="drawer_close_aria">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        </svg>
+      </button>
+    </div>
+    <div class="drawer-items">
+      <button class="drawer-item" id="darkModeToggle">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
+        </svg>
+        <span class="label" data-i18n="dark_mode">深色模式</span>
+        <span class="toggle" id="darkToggleSwitch"></span>
+      </button>
+
+      <button class="drawer-item" id="langToggle">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 0 1 5.08 16zm2.95-8H5.08a7.987 7.987 0 0 1 4.33-3.56A15.65 15.65 0 0 0 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
+        </svg>
+        <span class="label" data-i18n="lang_toggle">語言</span>
+        <span class="lang-badge" id="langBadge">繁中</span>
+      </button>
+
+      <div class="drawer-divider"></div>
+
+      <button class="drawer-item" id="shareBtn">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" />
+        </svg>
+        <span class="label" data-i18n="share_label">分享個人品牌頁</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ─── Blog detail overlay ─────────────────────────── -->
+  <div class="blog-detail" id="blogDetail">
+    <div class="blog-detail-header">
+      <button id="blogDetailClose" aria-label="返回" data-i18n-aria="back_aria">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+        </svg>
+      </button>
+      <span data-i18n="blog_header">部落格文章</span>
+    </div>
+    <div class="blog-detail-body" id="blogDetailBody"></div>
+  </div>
+
+  <main class="page-view" role="main">
+
+    <!-- ============ ABOUT ============ -->
+    <section class="page active" id="page-about" data-label="關於我">
+      <div class="hero-dark">
+        <div class="avatar-mono reveal">林</div>
+        <h1 class="reveal reveal-delay-1" data-i18n="about_name">林小明</h1>
+        <p class="subtitle reveal reveal-delay-2" data-i18n="about_title">產品設計師 · 獨立創作者</p>
+        <p class="bio reveal reveal-delay-3" data-i18n="about_bio">專注於數位產品設計與品牌體驗，從使用者需求出發，打造直覺且美觀的產品。目前自由接案，同時經營設計部落格。
+        </p>
+      </div>
+
+      <div class="content-light">
+        <div class="stats-row">
+          <div class="stat-card reveal reveal-delay-1">
+            <div class="num">8+</div>
+            <div class="label" data-i18n="stat_exp">年經驗</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-2">
+            <div class="num">60+</div>
+            <div class="label" data-i18n="stat_projects">專案完成</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-3">
+            <div class="num">30+</div>
+            <div class="label" data-i18n="stat_clients">合作客戶</div>
+          </div>
+        </div>
+
+        <div class="skill-grid reveal" style="margin-top:0">
+          <span class="pill" data-i18n="skill_ux">UX 設計</span>
+          <span class="pill" data-i18n="skill_ui">UI 設計</span>
+          <span class="pill">Figma</span>
+          <span class="pill" data-i18n="skill_ds">設計系統</span>
+          <span class="pill" data-i18n="skill_proto">原型製作</span>
+          <span class="pill" data-i18n="skill_research">使用者研究</span>
+          <span class="pill">HTML / CSS</span>
+          <span class="pill" data-i18n="skill_brand">品牌識別</span>
+          <span class="pill" data-i18n="skill_motion">動態設計</span>
+        </div>
+      </div>
+
+      <div class="content-white">
+        <div class="section-label reveal" data-i18n="section_experience">經歷</div>
+        <div class="timeline">
+          <div class="timeline-item reveal reveal-delay-1">
+            <div class="period" data-i18n="exp_1_period">2023 - 至今</div>
+            <h3 data-i18n="exp_1_role">資深產品設計師</h3>
+            <p class="org" data-i18n="exp_1_org">自由接案 · 遠端</p>
+          </div>
+          <div class="timeline-item reveal reveal-delay-2">
+            <div class="period" data-i18n="exp_2_period">2020 - 2023</div>
+            <h3 data-i18n="exp_2_role">產品設計師</h3>
+            <p class="org" data-i18n="exp_2_org">星創科技股份有限公司</p>
+          </div>
+          <div class="timeline-item reveal reveal-delay-3">
+            <div class="period" data-i18n="exp_3_period">2018 - 2020</div>
+            <h3 data-i18n="exp_3_role">UI / UX 設計師</h3>
+            <p class="org" data-i18n="exp_3_org">數位設計有限公司</p>
+          </div>
+          <div class="timeline-item reveal reveal-delay-4">
+            <div class="period" data-i18n="exp_4_period">2014 - 2018</div>
+            <h3 data-i18n="exp_4_role">視覺傳達設計學系</h3>
+            <p class="org" data-i18n="exp_4_org">國立台灣科技大學</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PORTFOLIO ============ -->
+    <section class="page" id="page-portfolio" data-label="作品集">
+      <div class="page-header reveal"
+        style="flex-direction:column;align-items:flex-start;gap:6px;padding-bottom:var(--space-3)">
+        <h2 data-i18n="portfolio_header">代表作</h2>
+        <p style="font-size:15px;color:var(--muted);letter-spacing:-0.224px;margin:0;line-height:1.5"
+          data-i18n="portfolio_desc">近年的精選專案，涵蓋行動應用、平台設計與品牌識別。</p>
+      </div>
+      <div class="project-grid">
+        <div class="project-card reveal reveal-delay-1">
+          <div class="thumb">
+            <svg viewBox="0 0 480 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="480" height="300" fill="var(--surface, #f5f5f7)" />
+              <!-- iPhone mockup -->
+              <rect x="155" y="30" width="90" height="170" rx="16" fill="var(--bg, #fff)"
+                stroke="var(--border, #d2d2d7)" stroke-width="2" />
+              <rect x="165" y="38" width="70" height="12" rx="10" fill="var(--accent, #0071e3)" opacity=".08" />
+              <circle cx="200" cy="64" r="16" fill="var(--accent, #0071e3)" opacity=".15" />
+              <rect x="172" y="88" width="56" height="4" rx="2" fill="var(--fg, #1d1d1f)" opacity=".12" />
+              <rect x="172" y="98" width="40" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".2" />
+              <rect x="172" y="106" width="48" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".2" />
+              <rect x="165" y="118" width="70" height="4" rx="2" fill="var(--accent, #0071e3)" opacity=".12" />
+              <rect x="172" y="130" width="56" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".15" />
+              <rect x="172" y="138" width="42" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".15" />
+              <rect x="172" y="146" width="50" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".15" />
+              <circle cx="200" cy="168" r="8" fill="var(--accent, #0071e3)" opacity=".12" />
+              <!-- Heart rate line -->
+              <path d="M178 162 l4 -8 l4 10 l4 -16 l4 12 l4 2" stroke="var(--accent, #0071e3)" stroke-width="2"
+                fill="none" opacity=".5" />
+              <!-- Label -->
+              <text x="280" y="85" font-size="10" fill="var(--fg-2, #424245)" font-weight="500"
+                font-family="var(--font-body)">健康追蹤 App</text>
+              <text x="280" y="102" font-size="8" fill="var(--muted, #6e6e73)">UI 設計 · 原型</text>
+              <rect x="280" y="115" width="60" height="16" rx="8" fill="var(--accent, #0071e3)" opacity=".1" />
+              <text x="285" y="127" font-size="7" fill="var(--accent, #0071e3)" font-weight="500">iOS · Android</text>
+            </svg>
+          </div>
+          <div class="body">
+            <h3 data-i18n="p1_title">健康追蹤 App</h3>
+            <p data-i18n="p1_desc">為日常健康管理設計的全方位行動應用，整合運動、飲食與睡眠數據。</p>
+            <div class="project-tags">
+              <span class="pill" data-i18n="tag_ux">UX 研究</span>
+              <span class="pill" data-i18n="tag_ui">UI 設計</span>
+              <span class="pill" data-i18n="tag_proto">原型</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card reveal reveal-delay-2">
+          <div class="thumb">
+            <svg viewBox="0 0 480 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="480" height="300" fill="var(--surface, #f5f5f7)" />
+              <!-- Laptop mockup -->
+              <rect x="100" y="40" width="130" height="85" rx="6" fill="var(--bg, #fff)" stroke="var(--border, #d2d2d7)"
+                stroke-width="2" />
+              <rect x="108" y="48" width="114" height="68" rx="3" fill="var(--surface-warm, #fbfbfd)" />
+              <!-- Grid lines -->
+              <rect x="115" y="55" width="40" height="18" rx="2" fill="var(--accent, #0071e3)" opacity=".08" />
+              <rect x="160" y="55" width="25" height="8" rx="2" fill="var(--fg, #1d1d1f)" opacity=".08" />
+              <rect x="115" y="78" width="100" height="2" rx="1" fill="var(--border, #d2d2d7)" opacity=".5" />
+              <rect x="115" y="84" width="30" height="12" rx="2" fill="var(--accent, #0071e3)" opacity=".1" />
+              <rect x="150" y="84" width="30" height="12" rx="2" fill="var(--accent, #0071e3)" opacity=".06" />
+              <rect x="185" y="84" width="30" height="12" rx="2" fill="var(--accent, #0071e3)" opacity=".06" />
+              <rect x="115" y="101" width="100" height="2" rx="1" fill="var(--border, #d2d2d7)" opacity=".5" />
+              <rect x="115" y="107" width="55" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".15" />
+              <rect x="115" y="113" width="40" height="3" rx="1.5" fill="var(--muted, #6e6e73)" opacity=".15" />
+              <!-- Base -->
+              <path d="M82 135 h166 l18 20 H64Z" fill="var(--border, #d2d2d7)" opacity=".3" />
+              <!-- Label -->
+              <text x="280" y="85" font-size="10" fill="var(--fg-2, #424245)" font-weight="500"
+                font-family="var(--font-body)">電商平台 Redesign</text>
+              <text x="280" y="102" font-size="8" fill="var(--muted, #6e6e73)">設計系統 · A/B 測試</text>
+              <rect x="280" y="115" width="80" height="16" rx="8" fill="var(--accent, #0071e3)" opacity=".1" />
+              <text x="285" y="127" font-size="7" fill="var(--accent, #0071e3)" font-weight="500">轉換率 +35%</text>
+            </svg>
+          </div>
+          <div class="body">
+            <h3 data-i18n="p2_title">電商平台 Redesign</h3>
+            <p data-i18n="p2_desc">大型電商平台的使用者體驗改造，提升結帳轉換率 35%。</p>
+            <div class="project-tags">
+              <span class="pill" data-i18n="tag_ds">設計系統</span>
+              <span class="pill" data-i18n="tag_ab">A/B 測試</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card reveal reveal-delay-3">
+          <div class="thumb">
+            <svg viewBox="0 0 480 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="480" height="300" fill="var(--surface, #f5f5f7)" />
+              <rect x="168" y="75" width="144" height="120" rx="16" fill="var(--bg,#fff)" stroke="var(--border,#d2d2d7)"
+                stroke-width="1.5" />
+              <!-- Bar chart abstraction -->
+              <rect x="196" y="110" width="12" height="50" rx="2" fill="var(--accent,#0071e3)" opacity=".2" />
+              <rect x="214" y="125" width="12" height="35" rx="2" fill="var(--accent,#0071e3)" opacity=".15" />
+              <rect x="232" y="100" width="12" height="60" rx="2" fill="var(--accent,#0071e3)" opacity=".3" />
+              <rect x="250" y="135" width="12" height="25" rx="2" fill="var(--accent,#0071e3)" opacity=".1" />
+              <rect x="268" y="118" width="12" height="42" rx="2" fill="var(--accent,#0071e3)" opacity=".2" />
+              <line x1="196" y1="167" x2="280" y2="167" stroke="var(--border,#d2d2d7)" stroke-width="1" opacity=".5" />
+              <!-- Datapoint dots -->
+              <circle cx="204" cy="130" r="3" fill="var(--accent,#0071e3)" opacity=".5" />
+              <circle cx="240" cy="142" r="3" fill="var(--accent,#0071e3)" opacity=".5" />
+              <circle cx="272" cy="120" r="3" fill="var(--accent,#0071e3)" opacity=".5" />
+            </svg>
+          </div>
+          <div class="body">
+            <h3 data-i18n="p3_title">數據儀表板</h3>
+            <p data-i18n="p3_desc">為 SaaS 產品設計的即時數據分析儀表板，支援自訂 Widget。</p>
+            <div class="project-tags">
+              <span class="pill" data-i18n="tag_ia">資訊架構</span>
+              <span class="pill" data-i18n="tag_dataviz">資料視覺化</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card reveal reveal-delay-4">
+          <div class="thumb">
+            <svg viewBox="0 0 480 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="480" height="300" fill="var(--surface, #f5f5f7)" />
+              <!-- Brand mark cards -->
+              <rect x="160" y="80" width="70" height="70" rx="16" fill="var(--bg,#fff)" stroke="var(--border,#d2d2d7)"
+                stroke-width="1.5" />
+              <rect x="170" y="90" width="50" height="50" rx="10" fill="var(--accent,#0071e3)" opacity=".08" />
+              <text x="195" y="121" font-size="16" fill="var(--accent,#0071e3)" text-anchor="middle" font-weight="700"
+                font-family="var(--font-display)">L</text>
+              <rect x="250" y="80" width="70" height="70" rx="16" fill="var(--bg,#fff)" stroke="var(--border,#d2d2d7)"
+                stroke-width="1.5" />
+              <text x="285" y="115" font-size="14" fill="var(--fg-2,#424245)" text-anchor="middle" font-weight="500"
+                font-family="var(--font-display)">L</text>
+              <text x="285" y="135" font-size="8" fill="var(--meta,#86868b)" text-anchor="middle">IFES</text>
+              <rect x="185" y="162" width="110" height="6" rx="3" fill="var(--accent,#0071e3)" opacity=".06" />
+              <rect x="185" y="173" width="80" height="4" rx="2" fill="var(--muted,#6e6e73)" opacity=".12" />
+            </svg>
+          </div>
+          <div class="body">
+            <h3 data-i18n="p4_title">品牌識別 - 綠意生活</h3>
+            <p data-i18n="p4_desc">有機保養品牌的完整視覺識別系統，從 Logo 到包裝設計。</p>
+            <div class="project-tags">
+              <span class="pill" data-i18n="tag_brand">品牌設計</span>
+              <span class="pill" data-i18n="tag_packaging">包裝</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card reveal reveal-delay-1">
+          <div class="thumb">
+            <svg viewBox="0 0 480 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="480" height="300" fill="var(--surface, #f5f5f7)" />
+              <!-- Music waveform abstraction -->
+              <rect x="155" y="90" width="16" height="76" rx="3" fill="var(--accent,#0071e3)" opacity=".18" />
+              <rect x="177" y="106" width="16" height="44" rx="3" fill="var(--accent,#0071e3)" opacity=".3" />
+              <rect x="199" y="80" width="16" height="100" rx="3" fill="var(--accent,#0071e3)" opacity=".22" />
+              <rect x="221" y="112" width="16" height="36" rx="3" fill="var(--accent,#0071e3)" opacity=".15" />
+              <rect x="243" y="95" width="16" height="66" rx="3" fill="var(--accent,#0071e3)" opacity=".25" />
+              <rect x="265" y="118" width="16" height="28" rx="3" fill="var(--accent,#0071e3)" opacity=".12" />
+              <rect x="287" y="88" width="16" height="84" rx="3" fill="var(--accent,#0071e3)" opacity=".2" />
+              <rect x="309" y="128" width="16" height="16" rx="3" fill="var(--accent,#0071e3)" opacity=".08" />
+              <!-- Play button -->
+              <circle cx="240" cy="178" r="14" fill="var(--accent,#0071e3)" opacity=".12" />
+              <polygon points="235,172 235,184 244,178" fill="var(--accent,#0071e3)" opacity=".4" />
+            </svg>
+          </div>
+          <div class="body">
+            <h3 data-i18n="p5_title">音樂學習平台</h3>
+            <p data-i18n="p5_desc">互動式音樂教學平台的產品設計，包含即時回饋與進度追蹤。</p>
+            <div class="project-tags">
+              <span class="pill" data-i18n="tag_ixd">互動設計</span>
+              <span class="pill" data-i18n="tag_ut">使用者測試</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card reveal reveal-delay-2">
+          <div class="thumb">
+            <svg viewBox="0 0 480 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="480" height="300" fill="var(--surface, #f5f5f7)" />
+              <!-- Chat bubble abstraction -->
+              <rect x="155" y="80" width="170" height="100" rx="18" fill="var(--bg,#fff)" stroke="var(--border,#d2d2d7)"
+                stroke-width="1.5" />
+              <circle cx="188" cy="116" r="12" fill="var(--accent,#0071e3)" opacity=".12" />
+              <text x="188" y="120" font-size="10" fill="var(--accent,#0071e3)" text-anchor="middle"
+                font-weight="600">AI</text>
+              <rect x="210" y="106" width="80" height="6" rx="3" fill="var(--fg,#1d1d1f)" opacity=".08" />
+              <rect x="210" y="118" width="55" height="6" rx="3" fill="var(--muted,#6e6e73)" opacity=".12" />
+              <rect x="210" y="130" width="70" height="6" rx="3" fill="var(--muted,#6e6e73)" opacity=".08" />
+              <path d="M170 170 l20 -12 l50 5 l20 5" stroke="var(--accent,#0071e3)" stroke-width="1.5" fill="none"
+                opacity=".15" />
+              <rect x="170" y="176" width="90" height="3" rx="1.5" fill="var(--accent,#0071e3)" opacity=".08" />
+              <rect x="170" y="184" width="60" height="3" rx="1.5" fill="var(--muted,#6e6e73)" opacity=".06" />
+            </svg>
+          </div>
+          <div class="body">
+            <h3 data-i18n="p6_title">AI 助理介面</h3>
+            <p data-i18n="p6_desc">企業級 AI 對話助理的介面設計，強調自然語言互動流程。</p>
+            <div class="project-tags">
+              <span class="pill" data-i18n="tag_cx">對話設計</span>
+              <span class="pill" data-i18n="tag_ui">UI 設計</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BLOG ============ -->
+    <section class="page" id="page-blog" data-label="部落格">
+      <div style="padding:var(--space-5) var(--space-5) 0" class="reveal">
+        <span
+          style="display:block;font-size:13px;font-weight:600;letter-spacing:0.04em;color:var(--meta);margin-bottom:var(--space-2);text-transform:uppercase"
+          data-i18n="blog_eyebrow">最近寫的</span>
+        <h2
+          style="font-size:28px;font-weight:600;font-family:var(--font-display);letter-spacing:0.196px;line-height:1.14;margin:0"
+          data-i18n="blog_title">設計筆記</h2>
+      </div>
+      <div class="blog-list">
+        <article class="blog-card reveal reveal-delay-1" data-article="0">
+          <div class="date">2025.06.15</div>
+          <h3 data-i18n="blog_0_title">設計系統的實務建立指南</h3>
+          <p data-i18n="blog_0_desc">從零開始建立一個可擴展的設計系統，分享在三個產品團隊中的實踐經驗與教訓。</p>
+          <span class="read-more" data-i18n="read_more">閱讀全文</span>
+        </article>
+        <article class="blog-card reveal reveal-delay-2" data-article="1">
+          <div class="date">2025.05.28</div>
+          <h3 data-i18n="blog_1_title">遠端協作設計工作流</h3>
+          <p data-i18n="blog_1_desc">Figma、Notion、Linear 的整合工作流分享，讓遠端設計團隊保持高效溝通。</p>
+          <span class="read-more" data-i18n="read_more">閱讀全文</span>
+        </article>
+        <article class="blog-card reveal reveal-delay-3" data-article="2">
+          <div class="date">2025.05.10</div>
+          <h3 data-i18n="blog_2_title">使用者訪談：問對問題的技巧</h3>
+          <p data-i18n="blog_2_desc">總結五年來執行超過 200 場使用者訪談的經驗，分享如何問出有價值的洞察。</p>
+          <span class="read-more" data-i18n="read_more">閱讀全文</span>
+        </article>
+        <article class="blog-card reveal reveal-delay-4" data-article="3">
+          <div class="date">2025.04.22</div>
+          <h3 data-i18n="blog_3_title">色彩系統與 OKLch 實戰</h3>
+          <p data-i18n="blog_3_desc">為什麼從 HSL 轉移到 OKLch，以及如何在設計系統中建立和諧的色彩尺度。</p>
+          <span class="read-more" data-i18n="read_more">閱讀全文</span>
+        </article>
+        <article class="blog-card reveal reveal-delay-1" data-article="4">
+          <div class="date">2025.04.05</div>
+          <h3 data-i18n="blog_4_title">微互動的設計心理學</h3>
+          <p data-i18n="blog_4_desc">從回饋迴圈到使用者的愉悅感，拆解七個常見的微互動設計模式。</p>
+          <span class="read-more" data-i18n="read_more">閱讀全文</span>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section class="page" id="page-services" data-label="服務">
+      <div class="page-header reveal" style="flex-direction:column;align-items:flex-start;gap:6px;padding-bottom:0">
+        <h2 data-i18n="services_header">服務方式</h2>
+        <p style="font-size:15px;color:var(--muted);letter-spacing:-0.224px;margin:0;line-height:1.5;max-width:400px"
+          data-i18n="services_desc">以專案或固定月費合作，每個案子都包含前期研究與迭代。</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal reveal-delay-1" style="background:var(--bg);box-shadow:var(--elev-raised)">
+          <div class="icon-box" style="background:var(--accent)"><span style="color:#fff">PD</span></div>
+          <h3 data-i18n="s1_title">產品設計</h3>
+          <p data-i18n="s1_desc">從使用者研究到高傳真原型，涵蓋完整產品設計生命週期。</p>
+          <div class="price">NT$ 80,000 <small data-i18n="s_price_start">起</small></div>
+          <button class="btn btn-primary btn-block" data-i18n="s1_btn">預約免費諮詢</button>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="icon-box"><span>BI</span></div>
+          <h3 data-i18n="s2_title">品牌識別</h3>
+          <p data-i18n="s2_desc">Logo、色彩系統、字體選擇到品牌規範文件的一站式服務。</p>
+          <div class="price">NT$ 50,000 <small data-i18n="s_price_start">起</small></div>
+          <button class="btn btn-outline btn-block" data-i18n="s2_btn">索取作品集</button>
+        </div>
+        <div class="service-card reveal reveal-delay-3">
+          <div class="icon-box"><span>DS</span></div>
+          <h3 data-i18n="s3_title">設計系統</h3>
+          <p data-i18n="s3_desc">為團隊建立可擴展的設計系統，含 Component Library 與文件。</p>
+          <div class="price">NT$ 120,000 <small data-i18n="s_price_start">起</small></div>
+          <button class="btn btn-outline btn-block" data-i18n="s3_btn">了解方案細節</button>
+        </div>
+        <div class="service-card reveal reveal-delay-4">
+          <div class="icon-box"><span>CO</span></div>
+          <h3 data-i18n="s4_title">設計顧問</h3>
+          <p data-i18n="s4_desc">每月固定時數的設計諮詢，適合正在建立設計能力的團隊。</p>
+          <div class="price">NT$ 15,000 <small data-i18n="s_price_month">/ 月</small></div>
+          <button class="btn btn-outline btn-block" data-i18n="s4_btn">訂閱月費方案</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESUME ============ -->
+    <section class="page" id="page-resume" data-label="履歷">
+      <div class="page-header reveal" style="flex-direction:column;align-items:flex-start;gap:6px;padding-bottom:0">
+        <h2 data-i18n="resume_header">經歷</h2>
+        <p style="font-size:15px;color:var(--muted);letter-spacing:-0.224px;margin:0;line-height:1.5"
+          data-i18n="resume_desc">從實習到自由接案，每一步都在打磨設計思維。</p>
+      </div>
+      <div class="resume-content">
+        <div class="resume-section reveal reveal-delay-1">
+          <h2 data-i18n="section_work">工作經歷</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="period" data-i18n="r_exp_1_period">2023.06 - 至今</div>
+              <h3 data-i18n="r_exp_1_role">資深產品設計師</h3>
+              <p class="org" data-i18n="r_exp_1_org">自由接案 · 遠端</p>
+            </div>
+            <div class="timeline-item">
+              <div class="period" data-i18n="r_exp_2_period">2020.03 - 2023.05</div>
+              <h3 data-i18n="r_exp_2_role">產品設計師</h3>
+              <p class="org" data-i18n="r_exp_2_org">星創科技股份有限公司 · 台北</p>
+            </div>
+            <div class="timeline-item">
+              <div class="period" data-i18n="r_exp_3_period">2018.07 - 2020.02</div>
+              <h3 data-i18n="r_exp_3_role">UI / UX 設計師</h3>
+              <p class="org" data-i18n="r_exp_3_org">數位設計有限公司 · 台北</p>
+            </div>
+            <div class="timeline-item">
+              <div class="period" data-i18n="r_exp_4_period">2016.09 - 2018.06</div>
+              <h3 data-i18n="r_exp_4_role">助理設計師（實習轉正）</h3>
+              <p class="org" data-i18n="r_exp_4_org">創意網路工作室 · 台北</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="resume-section reveal reveal-delay-2">
+          <h2 data-i18n="section_education">學歷</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="period" data-i18n="edu_period">2014 - 2018</div>
+              <h3 data-i18n="edu_role">視覺傳達設計學系 學士</h3>
+              <p class="org" data-i18n="edu_org">國立台灣科技大學</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="resume-section reveal reveal-delay-3">
+          <h2 data-i18n="section_cert">專業認證</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="period">2024</div>
+              <h3 data-i18n="cert_1">Google UX Design 專業認證</h3>
+              <p class="org" data-i18n="cert_1_org">Coursera / Google</p>
+            </div>
+            <div class="timeline-item">
+              <div class="period">2022</div>
+              <h3 data-i18n="cert_2">NN/g UX 管理策略</h3>
+              <p class="org" data-i18n="cert_2_org">Nielsen Norman Group</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="page" id="page-contact" data-label="聯絡">
+      <div class="page-header reveal" style="flex-direction:column;align-items:flex-start;gap:6px;padding-bottom:0">
+        <h2 data-i18n="contact_header">聯絡</h2>
+        <p style="font-size:15px;color:var(--muted);letter-spacing:-0.224px;margin:0;line-height:1.5"
+          data-i18n="contact_desc">歡迎來信聊聊 - 無論是新專案、合作提案或只是想認識。</p>
+      </div>
+      <div class="contact-content">
+        <div class="contact-info reveal reveal-delay-1">
+          <div class="row"
+            style="background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--radius-lg);padding:var(--space-5);flex-direction:column;align-items:flex-start;gap:4px;grid-column:1/-1">
+            <span class="row-label" style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em"
+              data-i18n="contact_email">Email</span>
+            <span class="row-value"
+              style="font-size:21px;font-weight:600;font-family:var(--font-display);color:var(--fg)">hello@example.com</span>
+            <span style="font-size:13px;color:var(--muted)" data-i18n="contact_reply">最快 24 小時內回覆</span>
+          </div>
+          <div class="row"
+            style="flex-direction:column;align-items:flex-start;gap:2px;padding:var(--space-4) var(--space-5);border:1px solid var(--border-soft);border-radius:var(--radius-lg);background:var(--bg)">
+            <span class="row-label" style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em"
+              data-i18n="contact_phone">電話</span>
+            <span class="row-value" style="font-size:17px;font-weight:500">+886 912 345 678</span>
+          </div>
+          <div class="row"
+            style="flex-direction:column;align-items:flex-start;gap:2px;padding:var(--space-4) var(--space-5);border:1px solid var(--border-soft);border-radius:var(--radius-lg);background:var(--bg)">
+            <span class="row-label" style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em"
+              data-i18n="contact_location">地點</span>
+            <span class="row-value" style="font-size:17px;font-weight:500" data-i18n="contact_loc_value">台北，台灣</span>
+          </div>
+        </div>
+
+        <div class="social-links reveal reveal-delay-2">
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24">
+              <path
+                d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68zm1.39 9.94v-8.37H5.5v8.37h2.77z" />
+            </svg></a>
+          <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24">
+              <path
+                d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
+            </svg></a>
+          <a href="#" aria-label="Twitter / X"><svg viewBox="0 0 24 24">
+              <path
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24">
+              <path
+                d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 0 2.5 1.25 1.25 0 0 1 0-2.5M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+            </svg></a>
+        </div>
+
+        <div class="contact-form-wrap reveal reveal-delay-3">
+          <form id="contactForm" novalidate>
+            <div class="form-group">
+              <label for="name" data-i18n="form_name">姓名</label>
+              <input type="text" id="name" data-i18n-placeholder="form_name_ph" placeholder="請輸入您的姓名" required />
+            </div>
+            <div class="form-group">
+              <label for="email" data-i18n="form_email">Email</label>
+              <input type="email" id="email" data-i18n-placeholder="form_email_ph" placeholder="請輸入您的 Email" required />
+            </div>
+            <div class="form-group">
+              <label for="message" data-i18n="form_message">訊息</label>
+              <textarea id="message" data-i18n-placeholder="form_message_ph" placeholder="請輸入您的訊息..."
+                required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="contactSubmit"
+              data-i18n="form_submit">送出訊息</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="app-tabs" role="tablist">
+    <button type="button" class="active" data-page="about" data-i18n-aria="nav_about">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+      </svg>
+      <span data-i18n="nav_about">關於</span>
+    </button>
+    <button type="button" data-page="portfolio" data-i18n-aria="nav_portfolio">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" />
+      </svg>
+      <span data-i18n="nav_portfolio">作品</span>
+    </button>
+    <button type="button" data-page="blog" data-i18n-aria="nav_blog">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20v-2h12v2H6zm0-4v-2h12v2H6z" />
+      </svg>
+      <span data-i18n="nav_blog">文章</span>
+    </button>
+    <button type="button" data-page="services" data-i18n-aria="nav_services">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
+      </svg>
+      <span data-i18n="nav_services">服務</span>
+    </button>
+    <button type="button" data-page="resume" data-i18n-aria="nav_resume">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-6h8v-2H8v2zm0 3h8v-2H8v2zm0-6h8V9H8v2z" />
+      </svg>
+      <span data-i18n="nav_resume">履歷</span>
+    </button>
+    <button type="button" data-page="contact" data-i18n-aria="nav_contact">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-4 2v2H8V6h8zM4 18V8l8 5 8-5v10H4z" />
+      </svg>
+      <span data-i18n="nav_contact">聯絡</span>
+    </button>
+  </nav>
+
+  <script>
+    (function () {
+      var STORE_PAGE = 'brand:page:' + (location.pathname || '/');
+      var STORE_THEME = 'brand:theme';
+      var current = 'about';
+
+      // ─── Splash ──────────────────────────────────────────────
+      var splash = document.getElementById('splash');
+      setTimeout(function () { splash.classList.add('hidden'); }, 1000);
+
+      // ─── Pages & tabs ─────────────────────────────────────────
+      var pages = document.querySelectorAll('.page');
+      var tabs = document.querySelectorAll('.app-tabs button');
+
+      function showPage(id, dir) {
+        var prev = current;
+        if (prev === id) return;
+        var out = document.getElementById('page-' + prev);
+        var inn = document.getElementById('page-' + id);
+        if (!inn) return;
+
+        out.classList.remove('active');
+        out.classList.add('exit');
+        inn.style.transition = 'none';
+        inn.classList.remove('active', 'exit');
+        inn.style.transform = dir === 'left' ? 'translateX(32px)' : 'translateX(-32px)';
+        inn.style.opacity = '0';
+        void inn.offsetHeight;
+        inn.style.transition = '';
+        inn.classList.add('active');
+        inn.style.transform = '';
+        inn.style.opacity = '';
+
+        setTimeout(function () { out.classList.remove('exit'); }, 400);
+        current = id;
+        tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.page === id); });
+        document.querySelectorAll('.nav-desktop .nav-links button').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.page === id);
+        });
+        try { localStorage.setItem(STORE_PAGE, id); } catch (_) { }
+        // Re-run scroll reveal on the new page
+        setTimeout(runReveal, 50);
+      }
+
+      function navigate(id) {
+        var idxA = Array.prototype.indexOf.call(pages, document.getElementById('page-' + current));
+        var idxB = Array.prototype.indexOf.call(pages, document.getElementById('page-' + id));
+        var dir = idxB > idxA ? 'left' : 'right';
+        if (idxA === -1 || idxB === -1) dir = 'left';
+        showPage(id, dir);
+      }
+
+      tabs.forEach(function (btn) {
+        btn.addEventListener('click', function () { navigate(btn.dataset.page); });
+      });
+      // ─── Desktop nav ──────────────────────────────────────────
+      document.querySelectorAll('.nav-desktop .nav-links button').forEach(function (btn) {
+        btn.addEventListener('click', function () { navigate(btn.dataset.page); });
+      });
+      document.getElementById('menuBtnDesktop').addEventListener('click', openDrawer);
+
+      try {
+        var saved = localStorage.getItem(STORE_PAGE);
+        if (saved && document.getElementById('page-' + saved)) current = saved;
+      } catch (_) { }
+
+      tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.page === current); });
+      pages.forEach(function (p) { p.classList.toggle('active', p.id === 'page-' + current); });
+
+      // ─── Scroll reveal ─────────────────────────────────────
+      function runReveal() {
+        var els = document.querySelectorAll('.page.active .reveal:not(.revealed)');
+        Array.prototype.forEach.call(els, function (el) {
+          if (el.getBoundingClientRect().top < window.innerHeight - 40) {
+            el.classList.add('revealed');
+          }
+        });
+      }
+
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { entry.target.classList.add('revealed'); }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
+
+      // ─── Drawer ─────────────────────────────────────────────
+      var menuBtn = document.getElementById('menuBtn');
+      var drawer = document.getElementById('drawer');
+      var drawerOverlay = document.getElementById('drawerOverlay');
+      var drawerClose = document.getElementById('drawerClose');
+
+      function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('open'); }
+      function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('open'); }
+
+      menuBtn.addEventListener('click', openDrawer);
+      drawerClose.addEventListener('click', closeDrawer);
+      drawerOverlay.addEventListener('click', closeDrawer);
+
+      // ─── Dark mode ──────────────────────────────────────────
+      var darkToggle = document.getElementById('darkModeToggle');
+      var darkSwitch = document.getElementById('darkToggleSwitch');
+      var html = document.documentElement;
+      var isDark = false;
+
+      function applyDark(v) {
+        isDark = v;
+        if (v) { html.setAttribute('data-theme', 'dark'); } else { html.removeAttribute('data-theme'); }
+        darkSwitch.classList.toggle('on', v);
+        var meta = document.getElementById('themeColor');
+        if (meta) meta.content = v ? '#000000' : '#f5f5f7';
+        try { localStorage.setItem(STORE_THEME, v ? 'dark' : 'light'); } catch (_) { }
+      }
+
+      try {
+        var savedTheme = localStorage.getItem(STORE_THEME);
+        if (savedTheme === 'dark') { applyDark(true); }
+        else if (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) { applyDark(true); }
+      } catch (_) { }
+
+      darkToggle.addEventListener('click', function () { applyDark(!isDark); });
+
+      // ─── i18n ──────────────────────────────────────────────────
+      var i18n = {
+        zh: {
+          lang_toggle: '語言', lang_badge: '繁中', drawer_title: '選單', drawer_close_aria: '關閉選單',
+          dark_mode: '深色模式', share_label: '分享個人品牌頁',
+          splash_text: '林小明 · 個人品牌',
+          nav_about: '關於', nav_portfolio: '作品', nav_blog: '文章', nav_services: '服務', nav_resume: '履歷', nav_contact: '聯絡',
+          nav_aria: '導航', menu_aria: '選單',
+          about_name: '林小明', about_title: '產品設計師 · 獨立創作者',
+          about_bio: '專注於數位產品設計與品牌體驗，從使用者需求出發，打造直覺且美觀的產品。目前自由接案，同時經營設計部落格。',
+          stat_exp: '年經驗', stat_projects: '專案完成', stat_clients: '合作客戶',
+          section_experience: '經歷', section_work: '工作經歷', section_education: '學歷', section_cert: '專業認證',
+          exp_1_period: '2023 - 至今', exp_1_role: '資深產品設計師', exp_1_org: '自由接案 · 遠端',
+          exp_2_period: '2020 - 2023', exp_2_role: '產品設計師', exp_2_org: '星創科技股份有限公司',
+          exp_3_period: '2018 - 2020', exp_3_role: 'UI / UX 設計師', exp_3_org: '數位設計有限公司',
+          exp_4_period: '2014 - 2018', exp_4_role: '視覺傳達設計學系', exp_4_org: '國立台灣科技大學',
+          r_exp_1_period: '2023.06 - 至今', r_exp_1_role: '資深產品設計師', r_exp_1_org: '自由接案 · 遠端',
+          r_exp_2_period: '2020.03 - 2023.05', r_exp_2_role: '產品設計師', r_exp_2_org: '星創科技股份有限公司 · 台北',
+          r_exp_3_period: '2018.07 - 2020.02', r_exp_3_role: 'UI / UX 設計師', r_exp_3_org: '數位設計有限公司 · 台北',
+          r_exp_4_period: '2016.09 - 2018.06', r_exp_4_role: '助理設計師（實習轉正）', r_exp_4_org: '創意網路工作室 · 台北',
+          edu_period: '2014 - 2018', edu_role: '視覺傳達設計學系 學士', edu_org: '國立台灣科技大學',
+          cert_1: 'Google UX Design 專業認證', cert_1_org: 'Coursera / Google',
+          cert_2: 'NN/g UX 管理策略', cert_2_org: 'Nielsen Norman Group',
+          portfolio_header: '代表作', portfolio_desc: '近年的精選專案，涵蓋行動應用、平台設計與品牌識別。',
+          p1_title: '健康追蹤 App', p1_desc: '為日常健康管理設計的全方位行動應用，整合運動、飲食與睡眠數據。',
+          p2_title: '電商平台 Redesign', p2_desc: '大型電商平台的使用者體驗改造，提升結帳轉換率 35%。',
+          p3_title: '數據儀表板', p3_desc: '為 SaaS 產品設計的即時數據分析儀表板，支援自訂 Widget。',
+          p4_title: '品牌識別 - 綠意生活', p4_desc: '有機保養品牌的完整視覺識別系統，從 Logo 到包裝設計。',
+          p5_title: '音樂學習平台', p5_desc: '互動式音樂教學平台的產品設計，包含即時回饋與進度追蹤。',
+          p6_title: 'AI 助理介面', p6_desc: '企業級 AI 對話助理的介面設計，強調自然語言互動流程。',
+          p1_svg_label: '健康追蹤 App', p1_svg_cat: 'UI 設計 · 原型', p1_svg_tag: 'iOS · Android',
+          p2_svg_label: '電商平台 Redesign', p2_svg_cat: '設計系統 · A/B 測試', p2_svg_tag: '轉換率 +35%',
+          p3_svg_label: '數據儀表板', p3_svg_cat: '資訊架構 · 資料視覺化',
+          p4_svg_label: '品牌識別 - 綠意生活', p4_svg_cat: '品牌設計 · 包裝',
+          p5_svg_label: '音樂學習平台', p5_svg_cat: '互動設計 · 使用者測試',
+          p6_svg_label: 'AI 助理介面', p6_svg_cat: '對話設計 · UI 設計',
+          blog_0_title: '設計系統的實務建立指南', blog_0_desc: '從零開始建立一個可擴展的設計系統，分享在三個產品團隊中的實踐經驗與教訓。',
+          blog_1_title: '遠端協作設計工作流', blog_1_desc: 'Figma、Notion、Linear 的整合工作流分享，讓遠端設計團隊保持高效溝通。',
+          blog_2_title: '使用者訪談：問對問題的技巧', blog_2_desc: '總結五年來執行超過 200 場使用者訪談的經驗，分享如何問出有價值的洞察。',
+          blog_3_title: '色彩系統與 OKLch 實戰', blog_3_desc: '為什麼從 HSL 轉移到 OKLch，以及如何在設計系統中建立和諧的色彩尺度。',
+          blog_4_title: '微互動的設計心理學', blog_4_desc: '從回饋迴圈到使用者的愉悅感，拆解七個常見的微互動設計模式。',
+          read_more: '閱讀全文', blog_eyebrow: '最近寫的', blog_title: '設計筆記',
+          blog_header: '部落格文章', back_aria: '返回', img_pending: '圖片待補',
+          services_header: '服務方式', services_desc: '以專案或固定月費合作，每個案子都包含前期研究與迭代。',
+          s1_title: '產品設計', s1_desc: '從使用者研究到高傳真原型，涵蓋完整產品設計生命週期。', s1_btn: '預約免費諮詢',
+          s2_title: '品牌識別', s2_desc: 'Logo、色彩系統、字體選擇到品牌規範文件的一站式服務。', s2_btn: '索取作品集',
+          s3_title: '設計系統', s3_desc: '為團隊建立可擴展的設計系統，含 Component Library 與文件。', s3_btn: '了解方案細節',
+          s4_title: '設計顧問', s4_desc: '每月固定時數的設計諮詢，適合正在建立設計能力的團隊。', s4_btn: '訂閱月費方案',
+          s_price_start: '起', s_price_month: '/ 月',
+          resume_header: '經歷', resume_desc: '從實習到自由接案，每一步都在打磨設計思維。',
+          contact_header: '聯絡', contact_desc: '歡迎來信聊聊 - 無論是新專案、合作提案或只是想認識。',
+          contact_email: 'Email', contact_reply: '最快 24 小時內回覆',
+          contact_phone: '電話', contact_location: '地點', contact_loc_value: '台北，台灣',
+          form_name: '姓名', form_name_ph: '請輸入您的姓名',
+          form_email: 'Email', form_email_ph: '請輸入您的 Email',
+          form_message: '訊息', form_message_ph: '請輸入您的訊息...',
+          form_submit: '送出訊息', form_sending: '傳送中…',
+          form_success: '感謝您的訊息！將在 24 小時內回覆',
+          form_error: '請填寫完整資訊',
+          share_title: '林小明 - 個人品牌', share_text: '林小明的個人品牌網站 - 產品設計師 · 獨立創作者',
+          share_copied: '連結已複製到剪貼簿',
+          lang_switched: '已切換為繁體中文',
+          service_toast: '已收到 {{name}} 洽詢需求，將盡快與您聯繫',
+        },
+        en: {
+          lang_toggle: 'Language', lang_badge: 'EN', drawer_title: 'Menu', drawer_close_aria: 'Close Menu',
+          dark_mode: 'Dark Mode', share_label: 'Share Profile',
+          splash_text: 'Ming Lin · Personal Brand',
+          nav_about: 'About', nav_portfolio: 'Portfolio', nav_blog: 'Blog', nav_services: 'Services', nav_resume: 'Resume', nav_contact: 'Contact',
+          nav_aria: 'Navigation', menu_aria: 'Menu',
+          about_name: 'Ming Lin', about_title: 'Product Designer · Creator',
+          about_bio: 'Focused on digital product design and brand experience. Crafting intuitive, beautiful products from user needs. Currently freelancing and running a design blog.',
+          stat_exp: 'Years Exp.', stat_projects: 'Projects', stat_clients: 'Clients',
+          section_experience: 'Experience', section_work: 'Work Experience', section_education: 'Education', section_cert: 'Certifications',
+          exp_1_period: '2023 - Present', exp_1_role: 'Senior Product Designer', exp_1_org: 'Freelance · Remote',
+          exp_2_period: '2020 - 2023', exp_2_role: 'Product Designer', exp_2_org: 'StarTech Co., Ltd.',
+          exp_3_period: '2018 - 2020', exp_3_role: 'UI / UX Designer', exp_3_org: 'Digital Design Ltd.',
+          exp_4_period: '2014 - 2018', exp_4_role: 'Visual Communication Design', exp_4_org: 'NTUST',
+          r_exp_1_period: '2023.06 - Present', r_exp_1_role: 'Senior Product Designer', r_exp_1_org: 'Freelance · Remote',
+          r_exp_2_period: '2020.03 - 2023.05', r_exp_2_role: 'Product Designer', r_exp_2_org: 'StarTech Co., Ltd. · Taipei',
+          r_exp_3_period: '2018.07 - 2020.02', r_exp_3_role: 'UI / UX Designer', r_exp_3_org: 'Digital Design Ltd. · Taipei',
+          r_exp_4_period: '2016.09 - 2018.06', r_exp_4_role: 'Junior Designer (Intern to Full-time)', r_exp_4_org: 'Creative Web Studio · Taipei',
+          edu_period: '2014 - 2018', edu_role: 'B.A. Visual Communication Design', edu_org: 'NTUST',
+          cert_1: 'Google UX Design Certificate', cert_1_org: 'Coursera / Google',
+          cert_2: 'NN/g UX Management Strategy', cert_2_org: 'Nielsen Norman Group',
+          portfolio_header: 'Selected Work', portfolio_desc: 'A curated selection of recent projects spanning mobile apps, platform design, and brand identity.',
+          p1_title: 'Health Tracking App', p1_desc: 'A comprehensive health tracking app integrating exercise, diet, and sleep data.',
+          p2_title: 'E-Commerce Redesign', p2_desc: 'UX overhaul of a major e-commerce platform, increasing checkout conversion by 35%.',
+          p3_title: 'Data Dashboard', p3_desc: 'Real-time analytics dashboard for SaaS products with customizable widgets.',
+          p4_title: 'Brand Identity - Green Life', p4_desc: 'Complete visual identity system for an organic skincare brand, from logo to packaging.',
+          p5_title: 'Music Learning Platform', p5_desc: 'Product design for an interactive music education platform with real-time feedback.',
+          p6_title: 'AI Assistant Interface', p6_desc: 'Interface design for an enterprise AI assistant, emphasizing natural language interaction.',
+          p1_svg_label: 'Health Tracking App', p1_svg_cat: 'UI Design · Prototype', p1_svg_tag: 'iOS · Android',
+          p2_svg_label: 'E-Commerce Redesign', p2_svg_cat: 'Design System · A/B Test', p2_svg_tag: 'Conversion +35%',
+          p3_svg_label: 'Data Dashboard', p3_svg_cat: 'IA · Data Vis',
+          p4_svg_label: 'Brand Identity - Green Life', p4_svg_cat: 'Brand Design · Packaging',
+          p5_svg_label: 'Music Learning Platform', p5_svg_cat: 'IxD · User Testing',
+          p6_svg_label: 'AI Assistant Interface', p6_svg_cat: 'Conversation Design · UI',
+          blog_0_title: 'Building a Design System', blog_0_desc: 'Lessons from leading design system adoption across three product teams.',
+          blog_1_title: 'Remote Design Collaboration', blog_1_desc: 'An integrated Figma, Notion, and Linear workflow for effective remote design teams.',
+          blog_2_title: 'User Interview Techniques', blog_2_desc: 'Insights from over 200 user interviews on how to ask the right questions.',
+          blog_3_title: 'Color Systems with OKLch', blog_3_desc: 'Why we moved from HSL to OKLch and how to build harmonious color scales.',
+          blog_4_title: 'Micro-interaction Psychology', blog_4_desc: 'Seven common micro-interaction patterns and the psychology behind them.',
+          read_more: 'Read More', blog_eyebrow: 'Latest', blog_title: 'Design Notes',
+          blog_header: 'Blog Article', back_aria: 'Back', img_pending: 'Image pending',
+          services_header: 'How I Work', services_desc: 'Project-based or monthly retainers. Every engagement includes upfront research and iteration.',
+          s1_title: 'Product Design', s1_desc: 'From user research to high-fidelity prototypes — covering the full product design lifecycle.', s1_btn: 'Book Free Call',
+          s2_title: 'Brand Identity', s2_desc: 'One-stop service from logo and color systems to typography and brand guidelines.', s2_btn: 'Request Portfolio',
+          s3_title: 'Design Systems', s3_desc: 'Scalable design systems for teams, including component libraries and documentation.', s3_btn: 'View Details',
+          s4_title: 'Design Consulting', s4_desc: 'Monthly retainer-based advisory for teams building their design capabilities.', s4_btn: 'Subscribe',
+          s_price_start: 'starting at', s_price_month: '/ mo',
+          resume_header: 'Experience', resume_desc: 'From internship to freelancing, every step sharpened the craft.',
+          contact_header: 'Contact', contact_desc: 'Let\'s connect — whether for a new project, collaboration, or just to say hello.',
+          contact_email: 'Email', contact_reply: 'Replies within 24h',
+          contact_phone: 'Phone', contact_location: 'Location', contact_loc_value: 'Taipei, Taiwan',
+          form_name: 'Name', form_name_ph: 'Your name',
+          form_email: 'Email', form_email_ph: 'Your email address',
+          form_message: 'Message', form_message_ph: 'Your message...',
+          form_submit: 'Send Message', form_sending: 'Sending…',
+          form_success: 'Thank you! I\'ll respond within 24 hours.',
+          form_error: 'Please fill in all fields',
+          share_title: 'Ming Lin - Personal Brand', share_text: 'Ming Lin\'s personal brand site - Product Designer · Creator',
+          share_copied: 'Link copied to clipboard',
+          lang_switched: 'Switched to English',
+          service_toast: 'Inquiry received for {{name}} — will respond shortly',
+        }
+      };
+
+      var LANG_KEY = 'brand:lang';
+      var currentLang = localStorage.getItem(LANG_KEY) || 'zh';
+
+      function t(key) { return i18n[currentLang][key] || key; }
+
+      function applyLang(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+        try { localStorage.setItem(LANG_KEY, lang); } catch (_) { }
+        // Update data-i18n elements
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          var k = el.dataset.i18n;
+          if (i18n[lang][k] !== undefined) el.textContent = i18n[lang][k];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+          var k = el.dataset.i18nAria;
+          if (i18n[lang][k] !== undefined) el.setAttribute('aria-label', i18n[lang][k]);
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+          var k = el.dataset.i18nPlaceholder;
+          if (i18n[lang][k] !== undefined) el.placeholder = i18n[lang][k];
+        });
+        // Update SVG text labels in project cards
+        var svgTextMap = [
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(1) text:nth-of-type(1)'), key: 'p1_svg_label' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(1) text:nth-of-type(2)'), key: 'p1_svg_cat' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(1) text:nth-of-type(3)'), key: 'p1_svg_tag' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(2) text:nth-of-type(1)'), key: 'p2_svg_label' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(2) text:nth-of-type(2)'), key: 'p2_svg_cat' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(2) text:nth-of-type(3)'), key: 'p2_svg_tag' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(3) text:nth-of-type(1)'), key: 'p3_svg_label' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(3) text:nth-of-type(2)'), key: 'p3_svg_cat' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(4) text:nth-of-type(1)'), key: 'p4_svg_label' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(4) text:nth-of-type(2)'), key: 'p4_svg_cat' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(5) text:nth-of-type(1)'), key: 'p5_svg_label' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(5) text:nth-of-type(2)'), key: 'p5_svg_cat' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(6) text:nth-of-type(1)'), key: 'p6_svg_label' },
+          { el: document.querySelector('#page-portfolio .project-card:nth-child(6) text:nth-of-type(2)'), key: 'p6_svg_cat' },
+        ];
+        svgTextMap.forEach(function (item) {
+          if (item.el && i18n[lang][item.key] !== undefined) item.el.textContent = i18n[lang][item.key];
+        });
+        // Update badges and labels
+        var lb = document.getElementById('langBadge');
+        if (lb) lb.textContent = t('lang_badge');
+        var ll = document.querySelector('#langToggle .label');
+        if (ll) ll.textContent = t('lang_toggle') || 'Language';
+      }
+
+      // ─── Lang toggle click ─────────────────────────────────
+      document.getElementById('langToggle').addEventListener('click', function () {
+        applyLang(currentLang === 'zh' ? 'en' : 'zh');
+        showToast(t('lang_switched'));
+      });
+
+      // Apply saved language at startup
+      applyLang(currentLang);
+
+      // ─── Share ──────────────────────────────────────────────
+      document.getElementById('shareBtn').addEventListener('click', function () {
+        if (navigator.share) {
+          navigator.share({
+            title: t('share_title'),
+            text: t('share_text'),
+            url: location.href
+          }).catch(function () { });
+        } else {
+          var dummy = document.createElement('input');
+          dummy.value = location.href;
+          document.body.appendChild(dummy);
+          dummy.select();
+          try { document.execCommand('copy'); showToast(t('share_copied')); } catch (_) { }
+          document.body.removeChild(dummy);
+        }
+        closeDrawer();
+      });
+
+      // ─── Toast system ──────────────────────────────────────
+      var toastEl = document.getElementById('toast');
+      var toastTimer = null;
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2500);
+      }
+
+      // ─── Contact form ──────────────────────────────────────
+      var contactForm = document.getElementById('contactForm');
+      var contactSubmit = document.getElementById('contactSubmit');
+
+      contactForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = document.getElementById('name').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var msg = document.getElementById('message').value.trim();
+        if (!name || !email || !msg) {
+          showToast(t('form_error'));
+          return;
+        }
+        contactSubmit.disabled = true;
+        contactSubmit.textContent = t('form_sending');
+        setTimeout(function () {
+          contactSubmit.disabled = false;
+          contactSubmit.textContent = t('form_submit');
+          contactForm.reset();
+          showToast(t('form_success'));
+        }, 1200);
+      });
+
+      // ─── Blog detail ────────────────────────────────────────
+      var blogDetail = document.getElementById('blogDetail');
+      var blogDetailBody = document.getElementById('blogDetailBody');
+      var blogDetailClose = document.getElementById('blogDetailClose');
+
+      var articles = [
+        {
+          date: '2025.06.15',
+          zh: { title: '設計系統的實務建立指南', body: '<p>從零開始建立一個可擴展的設計系統，是每個成長中團隊遲早要面對的挑戰。</p><h2>為什麼需要設計系統？</h2><p>設計系統不是組件庫，更不是 UI Kit。它是一套共享的語言與規則，讓設計師與工程師能在同個框架下高效協作。</p><blockquote>設計系統的本質不是美觀，而是共識。</blockquote><h2>建立步驟</h2><p>第一步是盤點現有介面模式。第二步是定義設計原則。第三步才是建立 token 層級與元件 spec。</p><p>最重要的教訓：不要一次做完再推廣。從一個最痛的模式開始。</p>' },
+          en: { title: 'Building a Design System', body: '<p>Building a scalable design system from scratch is a challenge every growing team eventually faces.</p><h2>Why a Design System?</h2><p>A design system is not a component library or a UI kit — it is a shared language and ruleset for designers and engineers to collaborate efficiently.</p><blockquote>The essence of a design system isn\'t beauty — it\'s consensus.</blockquote><h2>Steps to Build</h2><p>Start by auditing existing UI patterns. Define design principles next, then establish token tiers and component specs.</p><p>The key lesson: don\'t build everything before rolling it out — start with one pain point (buttons or forms) and let the team feel the benefit first.</p>' }
+        },
+        {
+          date: '2025.05.28',
+          zh: { title: '遠端協作設計工作流', body: '<p>遠端工作已成為常態，但設計協作仍然充滿摩擦。這篇文章分享我目前使用的工具鏈與流程。</p><h2>核心工具鏈</h2><p>Figma 作為設計共創平台、Notion 管理設計決策與 spec、Linear 追蹤實作進度。</p><blockquote>最好的設計評審不是會議，而是 annotated spec。</blockquote><h2>建立非同步審查文化</h2><p>我們規定所有設計稿至少要有 24 小時的非同步評論期才能進入實作。</p>' },
+          en: { title: 'Remote Design Collaboration', body: '<p>Remote work is the norm, but design collaboration still has friction. This post shares the toolchain and workflow I use.</p><h2>Core Toolchain</h2><p>Figma for design co-creation, Notion for design decisions and specs, Linear for implementation tracking.</p><blockquote>The best design review isn\'t a meeting — it\'s an annotated spec.</blockquote><h2>Async Review Culture</h2><p>We require a 24-hour async review period before any design moves to implementation. This dramatically reduces revision cycles.</p>' }
+        },
+        {
+          date: '2025.05.10',
+          zh: { title: '使用者訪談：問對問題的技巧', body: '<p>過去五年我執行超過 200 場使用者訪談，這是關於如何問出有價值洞察的經驗總結。</p><h2>最常見的錯誤</h2><p>引導式提問是最常見的問題。真正的技巧是問「告訴我你上次遇到這個情況時做了什麼」。</p><blockquote>使用者的行為比他們的意見更誠實。</blockquote><h2>五個核心技巧</h2><p>1. 問具體情境。2. 用「告訴我更多」代替「為什麼」。3. 留意情感關鍵字。4. 讓 silence 成為工具。5. 最後一定要問「還有什麼我該問但你還沒說的？」</p>' },
+          en: { title: 'User Interview Techniques', body: '<p>After conducting over 200 user interviews in five years, here are my key takeaways on asking the right questions.</p><h2>Most Common Mistake</h2><p>Leading questions are the biggest trap. Instead of "Don\'t you think this feature is useful?", ask "Tell me about the last time you encountered this situation."</p><blockquote>Users\' behavior is more honest than their opinions.</blockquote><h2>Five Core Tips</h2><p>1. Ask about specific situations. 2. Say "Tell me more" instead of "Why". 3. Watch for emotional keywords. 4. Use silence as a tool. 5. Always end with "What should I have asked that I didn\'t?"</p>' }
+        },
+        {
+          date: '2025.04.22',
+          zh: { title: '色彩系統與 OKLch 實戰', body: '<p>OKLch 正在改變設計師思考色彩的方式。這篇文章解釋為什麼從 HSL 轉移，以及如何在設計系統中應用。</p><h2>HSL 的限制</h2><p>HSL 的亮度感知不均勻。OKLch 修正了這個問題，讓設計師能建立真正和諧的色彩尺度。</p><blockquote>OKLch 讓色彩像 typography 一樣有系統。</blockquote><h2>實戰應用</h2><p>在設計系統中，我們用 OKLch 建立了完整的色彩 token 層級，讓明暗模式的轉換變得平滑。</p>' },
+          en: { title: 'Color Systems with OKLch', body: '<p>OKLch is changing how designers think about color. This post explains why we moved from HSL and how to apply it in a design system.</p><h2>HSL\'s Limitations</h2><p>HSL\'s perceptual brightness is uneven — blue and yellow at the same lightness value look drastically different. OKLch fixes this.</p><blockquote>OKLch makes color as systematic as typography.</blockquote><h2>In Practice</h2><p>We built a complete color token hierarchy using OKLch, with consistent lightness and chroma steps from surface to accent colors. Dark mode transitions have never been smoother.</p>' }
+        },
+        {
+          date: '2025.04.05',
+          zh: { title: '微互動的設計心理學', body: '<p>拆解七個常見的微互動設計模式，以及它們背後的心理學原理。</p><h2>為什麼微互動重要</h2><p>微互動是產品個性的載體。一個按鈕的 press 回饋、一個 loading 動態 - 這些細節累積成使用者對產品的整體感受。</p><blockquote>使用者可能說不出哪裡好，但他們感覺得到。</blockquote><h2>七個模式</h2><p>1. 確認回饋。2. 狀態提示。3. 引導暗示。4. 恭喜鼓勵。5. 錯誤溫柔。6. 等待愉悅。7. 出乎意料。</p>' },
+          en: { title: 'Micro-interaction Psychology', body: '<p>Seven common micro-interaction patterns and the psychology behind them.</p><h2>Why Micro-interactions Matter</h2><p>Micro-interactions carry product personality. A button press feedback, a loading animation, a success toast — these details shape the overall user experience.</p><blockquote>Users may not be able to articulate what\'s good, but they feel it.</blockquote><h2>Seven Patterns</h2><p>1. Confirmation feedback. 2. Status indicators. 3. Motion-guided attention. 4. Celebratory moments. 5. Gentle error handling. 6. Delightful waiting states. 7. Surprise details.</p>' }
+        }
+      ];
+
+      function openArticle(idx) {
+        var a = articles[idx];
+        if (!a) return;
+        var v = a[currentLang] || a.zh;
+        blogDetailBody.innerHTML = '<div class="date">' + a.date + '</div><h1>' + v.title + '</h1><div class="hero">' + t('img_pending') + '</div>' + v.body;
+        blogDetail.classList.add('open');
+      }
+
+      document.querySelectorAll('.blog-card').forEach(function (card) {
+        card.addEventListener('click', function (e) {
+          var idx = parseInt(card.dataset.article, 10);
+          if (!isNaN(idx)) openArticle(idx);
+        });
+      });
+
+      blogDetailClose.addEventListener('click', function () {
+        blogDetail.classList.remove('open');
+      });
+
+      // ─── Initial reveal ─────────────────────────────────────
+      setTimeout(runReveal, 100);
+
+      // ─── Service buttons ────────────────────────────────────
+      document.querySelectorAll('.service-card .btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var name = btn.closest('.service-card').querySelector('h3').textContent;
+          showToast(t('service_toast').replace('{{name}}', name));
+        });
+      });
+
+    })();
+  </script>
+</body>
+
+</html>
