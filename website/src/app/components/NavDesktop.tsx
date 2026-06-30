@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useApp, type PageSection } from '../AppContext'
 import { transformKeys } from '@/lib/transform'
+import Img from './Img'
 
 const SECTIONS: { key: PageSection }[] = [
   { key: 'about' },
@@ -58,7 +59,7 @@ export default function NavDesktop() {
       <div className="brand">
         {siteIcon ? (
           <span className="brand-mono" style={{ overflow: 'hidden' }}>
-            <img src={siteIcon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <Img src={siteIcon} alt="" wrapStyle={{ width: '100%', height: '100%' }} />
           </span>
         ) : (
           <span className="brand-mono">P</span>

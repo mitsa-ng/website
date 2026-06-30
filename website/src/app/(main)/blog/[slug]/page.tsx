@@ -94,7 +94,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const publishedAt = post.published_at?.slice(0, 10) || ''
 
   return (
-    <div className="page active" style={{ position: 'relative' }}>
+    <div className="page active page-entering" style={{ position: 'relative' }}>
       <JsonLdServer
         title={title}
         description={isZh ? post.excerpt_zh : post.excerpt_en}

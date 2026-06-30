@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Img from './Img'
 
 let shown = false
 
@@ -25,7 +26,7 @@ export default function Splash() {
     <div className={`splash${hidden ? ' hidden' : ''}`}>
       <div className="mark">
         {icon ? (
-          <img src={icon} alt="" className="splash-icon" />
+          <Img src={icon} alt="" wrapClassName="splash-icon" wrapStyle={{ width: '100%', height: '100%', borderRadius: 18 }} />
         ) : (
           <span>N</span>
         )}

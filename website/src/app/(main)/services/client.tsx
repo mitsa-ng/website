@@ -5,7 +5,7 @@ import ServicesSection from '../../components/ServicesSection'
 export default function ServicesPage() {
   return (
     <div className="page-view">
-      <div className="page active">
+      <div className="page active page-entering">
         <ServicesSection />
       </div>
     </div>

@@ -11,7 +11,7 @@ export default function AboutPage() {
     <>
       <JsonLd type="person" />
       <div className="page-view">
-        <div className="page active">
+        <div className="page active page-entering">
           <HeroSection />
           <StatsSection />
           <SkillsSection />

@@ -5,7 +5,7 @@ import BlogSection from '../../components/BlogSection'
 export default function BlogListPage() {
   return (
     <div className="page-view">
-      <div className="page active">
+      <div className="page active page-entering">
         <BlogSection />
       </div>
     </div>
