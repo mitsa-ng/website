@@ -1,9 +1,13 @@
 'use client'
 
+import { useRouter, usePathname } from 'next/navigation'
 import { useApp } from '../AppContext'
 
 export default function Drawer({ onNavigate }: { onNavigate?: (key: string) => void }) {
-  const { drawerOpen, setDrawerOpen, locale, setLocale, theme, toggleTheme, dict, setActivePage } = useApp()
+  const router = useRouter()
+  const pathname = usePathname()
+  const { drawerOpen, setDrawerOpen, locale, setLocale, theme, toggleTheme, dict, setActivePage, setNavigating } = useApp()
+  const isHome = pathname === '/' || pathname === ''
 
   const pages: { key: string; label: string }[] = [
     { key: 'about', label: dict.nav.about },
@@ -13,6 +17,16 @@ export default function Drawer({ onNavigate }: { onNavigate?: (key: string) => v
     { key: 'resume', label: dict.nav.resume },
     { key: 'contact', label: dict.nav.contact },
   ]
+
+  const navigate = (key: string) => {
+    setDrawerOpen(false)
+    if (isHome) {
+      setActivePage(key as any)
+    } else {
+      setNavigating(true)
+      router.push(`/${locale}/${key}`)
+    }
+  }
 
   return (
     <>
@@ -29,11 +43,7 @@ export default function Drawer({ onNavigate }: { onNavigate?: (key: string) => v
             <button
               key={p.key}
               className="drawer-item"
-              onClick={() => {
-                setDrawerOpen(false);
-                onNavigate && onNavigate(p.key);
-                setActivePage(p.key as any);
-              }}
+              onClick={() => navigate(p.key)}
             >
               <span className="label">{p.label}</span>
             </button>
