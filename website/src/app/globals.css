@@ -294,6 +294,7 @@ a:focus-visible{outline:4px solid color-mix(in oklab,var(--accent),transparent 6
   .blog-detail.open::before{opacity:1;pointer-events:auto}
   .blog-detail-body{padding:var(--space-6) var(--space-8)}
   .blog-page-body{padding:var(--space-6) var(--space-8)}
+  .blog-page-header{top:52px}
   .blog-detail-header{padding:var(--space-4) var(--space-6);padding-top:calc(var(--safe-t) + var(--space-4))}
   .toast{bottom:40px}
 }

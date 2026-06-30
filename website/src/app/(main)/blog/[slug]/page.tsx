@@ -116,7 +116,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         publishedAt={publishedAt}
       />
       <BlogNav />
-      <div className="blog-page-body" style={{ paddingTop: 60 }}>
+      <div className="blog-page-body">
         <div className="date">{publishedAt}</div>
         <h1>{title}</h1>
         <div className="markdown-content">
