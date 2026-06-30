@@ -24,15 +24,13 @@ export default function JsonLd({ type, data }: Props) {
   const [seoSettings, setSeoSettings] = useState<SeoSettings | null>(null)
 
   useEffect(() => {
-    Promise.all([
-      getAboutContent(),
-      fetch('/api/settings').then(r => r.json()).catch(() => ({})),
-    ]).then(([aboutData, settings]) => {
-      if (aboutData) setAbout(aboutData)
-      setSeoSettings({
-        author_name: settings.author_name,
-        author_url: settings.author_url,
-      })
+    const settings = (window as any).__SETTINGS__ || {}
+    setSeoSettings({
+      author_name: settings.author_name,
+      author_url: settings.author_url,
+    })
+    getAboutContent().then(data => {
+      if (data) setAbout(data)
     })
   }, [])
 

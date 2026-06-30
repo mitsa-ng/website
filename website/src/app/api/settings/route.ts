@@ -1,14 +1,11 @@
 import { query } from '@/db';
 import { corsResponse } from '@/lib/cors';
 import { requireAdmin } from '@/lib/auth';
+import { fetchSettings, invalidateSettingsCache } from '@/lib/settings';
 
 export async function GET() {
   try {
-    const rows = await query<{ key: string; value: string }>('SELECT key, value FROM site_settings');
-    const settings: Record<string, any> = {};
-    for (const row of rows) {
-      try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
-    }
+    const settings = await fetchSettings();
     return corsResponse(settings);
   } catch (e) {
     return corsResponse({ error: String(e) }, { status: 500 });
@@ -40,11 +37,8 @@ export async function PUT(req: Request) {
         );
       }
     }
-    const rows = await query<{ key: string; value: string }>('SELECT key, value FROM site_settings');
-    const settings: Record<string, any> = {};
-    for (const row of rows) {
-      try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
-    }
+    invalidateSettingsCache();
+    const settings = await fetchSettings();
     return corsResponse(settings);
   } catch (e) {
     return corsResponse({ error: String(e) }, { status: 500 });

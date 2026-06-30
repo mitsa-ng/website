@@ -1,26 +1,11 @@
 import type { Metadata, Viewport } from "next"
 import { headers } from 'next/headers'
-import { query } from '@/db'
+import { fetchSettings } from '@/lib/settings'
 import "./globals.css"
 import { AppProvider } from "./AppContext"
 import GAScript from "./components/GAScript"
 
 const DEFAULT_LOCALE = 'en'
-
-async function fetchSettings(): Promise<Record<string, any>> {
-  try {
-    const rows = await query<{ key: string; value: string }>(
-      'SELECT key, value FROM site_settings',
-    )
-    const settings: Record<string, any> = {}
-    for (const row of rows) {
-      try { settings[row.key] = JSON.parse(row.value) } catch { settings[row.key] = row.value }
-    }
-    return settings
-  } catch {
-    return {}
-  }
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const h = await headers()
@@ -96,12 +81,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const s = await fetchSettings()
   const themeColor = s.theme_color || '#f5f5f7'
   const gaId = s.ga_id as string | undefined
+  const clientSettings = JSON.stringify(s)
 
   return (
     <html lang={lang} data-locale={locale} className="h-full antialiased" style={{ colorScheme: 'light dark' }}>
       <head />
       <body className="h-full">
         <GAScript gaId={gaId} />
+        <script dangerouslySetInnerHTML={{ __html: `window.__SETTINGS__=${clientSettings}` }} />
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

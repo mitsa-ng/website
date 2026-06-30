@@ -23,14 +23,12 @@ export default function NavDesktop() {
   const isHome = pathname === '/' || pathname === ''
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then(r => r.json())
-      .then(d => transformKeys(d) as Record<string, any>)
-      .then(d => {
-        if (d.brandText) setBrand(d.brandText)
-        if (d.siteIcon) setSiteIcon(d.siteIcon)
-      })
-      .catch(() => {})
+    const settings = (window as any).__SETTINGS__
+    if (settings) {
+      const normalized = transformKeys(settings) as Record<string, any>
+      if (normalized.brandText) setBrand(normalized.brandText)
+      if (normalized.siteIcon) setSiteIcon(normalized.siteIcon)
+    }
   }, [])
 
   const labels: Record<PageSection, string> = {
