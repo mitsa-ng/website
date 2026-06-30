@@ -6,6 +6,13 @@ import { loadLocale, type Locale, type I18nDict } from '@/lib/i18n'
 export type PageSection = 'about' | 'portfolio' | 'blog' | 'services' | 'resume' | 'contact'
 export type ToastType = 'success' | 'error' | 'info'
 
+function getLocaleFromHtml(): Locale {
+  if (typeof window === 'undefined') return 'en'
+  const attr = document.documentElement.getAttribute('data-locale')
+  if (attr === 'zh-TW' || attr === 'en') return attr
+  return 'en'
+}
+
 interface AppState {
   locale: Locale
   dict: I18nDict
@@ -26,7 +33,7 @@ interface AppContextType extends AppState {
 const AppContext = createContext<AppContextType | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
-const [locale, setLocaleState] = useState<Locale>('en')
+  const [locale, setLocaleState] = useState<Locale>('en')
   const [dict, setDict] = useState<I18nDict>(loadLocale('en'))
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
@@ -36,14 +43,15 @@ const [locale, setLocaleState] = useState<Locale>('en')
   const drawerNavigationRef = useRef<(key: string) => void | undefined>(undefined)
 
   useEffect(() => {
-    const savedLocale = (localStorage.getItem('locale') as Locale) || 'en'
+    const l = getLocaleFromHtml()
+    setLocaleState(l)
+    setDict(loadLocale(l))
+
     const savedTheme = (() => {
       const stored = localStorage.getItem('theme')
       if (stored === 'dark' || stored === 'light') return stored
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     })()
-    setLocaleState(savedLocale)
-    setDict(loadLocale(savedLocale))
     setTheme(savedTheme)
     setMounted(true)
   }, [])
@@ -55,9 +63,11 @@ const [locale, setLocaleState] = useState<Locale>('en')
   }, [theme, mounted])
 
   const setLocale = useCallback((l: Locale) => {
-    setLocaleState(l)
-    setDict(loadLocale(l))
-    localStorage.setItem('locale', l)
+    document.cookie = `locale=${l};path=/;max-age=31536000`
+    const path = window.location.pathname
+    const prefix = path.startsWith('/zh-TW') ? '/zh-TW' : path.startsWith('/en') ? '/en' : ''
+    const rest = prefix ? path.slice(prefix.length) : path
+    window.location.href = `/${l}${rest || '/'}${window.location.search}`
   }, [])
 
   const toggleTheme = useCallback(() => {

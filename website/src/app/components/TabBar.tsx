@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname, useRouter } from 'next/navigation'
 import { useApp, type PageSection } from '../AppContext'
 
 function IconPerson() {
@@ -30,8 +31,11 @@ const TABS: { key: PageSection; Icon: React.FC }[] = [
   { key: 'contact', Icon: IconMail },
 ]
 
-export default function TabBar({ onNavigate }: { onNavigate?: (key: PageSection) => void }) {
-  const { dict, activePage, setActivePage } = useApp()
+export default function TabBar() {
+  const pathname = usePathname()
+  const router = useRouter()
+  const { dict, locale, activePage, setActivePage } = useApp()
+  const isHome = pathname === '/' || pathname === ''
 
   const labels: Record<PageSection, string> = {
     about: dict.nav.about,
@@ -42,13 +46,26 @@ export default function TabBar({ onNavigate }: { onNavigate?: (key: PageSection)
     contact: dict.nav.contact,
   }
 
+  const handleClick = (key: PageSection) => {
+    if (isHome) {
+      setActivePage(key)
+    } else {
+      router.push(`/${locale}/${key}`)
+    }
+  }
+
+  const isActive = (key: PageSection) => {
+    if (isHome) return activePage === key
+    return pathname === `/${key}` || pathname.startsWith(`/${key}/`)
+  }
+
   return (
     <div className="app-tabs">
       {TABS.map(tab => (
         <button
           key={tab.key}
-          className={activePage === tab.key ? 'active' : ''}
-          onClick={() => onNavigate ? onNavigate(tab.key) : setActivePage(tab.key)}
+          className={isActive(tab.key) ? 'active' : ''}
+          onClick={() => handleClick(tab.key)}
         >
           <tab.Icon />
           <span>{labels[tab.key]}</span>

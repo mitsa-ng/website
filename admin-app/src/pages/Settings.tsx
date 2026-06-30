@@ -61,6 +61,7 @@ interface SiteSettings {
   contact_reply_time_zh: string
   contact_reply_time_en: string
   brand_text?: string
+  site_icon?: string
   about_content?: AboutContent
   fingerprint_enabled?: boolean
   fingerprint_method?: 'hash' | 'signature'
@@ -246,10 +247,22 @@ export default function Settings() {
         {loading ? (
           <p>{t.settings.loading}</p>
         ) : (
-          <div className="form-group">
-            <label>{t.settings.brandText}</label>
-            <input value={site.brand_text || ''} onChange={e => setSite(s => ({ ...s, brand_text: e.target.value }))} />
-          </div>
+          <>
+            <div className="form-group">
+              <label>{t.settings.brandText}</label>
+              <input value={site.brand_text || ''} onChange={e => setSite(s => ({ ...s, brand_text: e.target.value }))} />
+            </div>
+            <div className="form-group">
+              <label>Site Icon URL</label>
+              <input value={site.site_icon || ''} onChange={e => setSite(s => ({ ...s, site_icon: e.target.value }))} placeholder="https://..." />
+              {site.site_icon && (
+                <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 13, color: 'var(--muted)' }}>Preview:</span>
+                  <img src={site.site_icon} alt="icon" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover' }} />
+                </div>
+              )}
+            </div>
+          </>
         )}
       </div>
 

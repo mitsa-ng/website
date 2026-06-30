@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
 import { useApp } from '../AppContext'
 import { usePoll } from '@/lib/usePoll'
 import Reveal from './Reveal'
@@ -13,6 +14,28 @@ interface Project {
   tags: string[]
   link?: string | null
   imageUrl?: string | null
+}
+
+function ProjectThumb({ url }: { url: string | null | undefined }) {
+  const [loaded, setLoaded] = useState(false)
+  const ref = useRef<HTMLImageElement | null>(null)
+
+  useEffect(() => {
+    if (!url) { setLoaded(true); return }
+    const img = new Image()
+    ref.current = img
+    img.onload = () => setLoaded(true)
+    img.src = url
+    if (img.complete) setLoaded(true)
+    return () => { img.onload = null }
+  }, [url])
+
+  return (
+    <div
+      className={`thumb${loaded ? ' img-fade-in' : ' img-shimmer'}`}
+      style={url && loaded ? { backgroundImage: `url(${url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+    />
+  )
 }
 
 export default function PortfolioSection() {
@@ -32,7 +55,7 @@ export default function PortfolioSection() {
         {(projects || []).map((p, i) => (
           <Reveal key={p.id} delay={i % 3}>
             <div className={`project-card${p.link ? ' clickable' : ''}`} onClick={() => p.link && window.open(p.link, '_blank', 'noopener')}>
-              <div className="thumb" style={p.imageUrl ? { backgroundImage: `url(${p.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined} />
+              <ProjectThumb url={p.imageUrl} />
               <div className="body">
                 <h3>{p[titleKey]}</h3>
                 <p>{p[descKey]}</p>

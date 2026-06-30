@@ -11,6 +11,7 @@ import Services from './pages/Services'
 import Contacts from './pages/Contacts'
 import ContactEdit from './pages/ContactEdit'
 import Settings from './pages/Settings'
+import SEO from './pages/SEO'
 import Login from './pages/Login'
 
 function AppInner() {
@@ -54,21 +55,28 @@ function AppInner() {
 
   return (
     <div className="app-layout">
-      <Sidebar onLogout={handleLogout} />
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/posts" element={<Posts />} />
-          <Route path="/posts/new" element={<PostEditor />} />
-          <Route path="/posts/:slug" element={<PostEditor />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/contacts" element={<Contacts />} />
-          <Route path="/contacts/:id/edit" element={<ContactEdit />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+      <div className="title-bar">
+        <div className="title-bar-traffic" />
+        <span className="title-bar-text">Personal Web Admin</span>
+      </div>
+      <div className="app-body">
+        <Sidebar onLogout={handleLogout} />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/posts" element={<Posts />} />
+            <Route path="/posts/new" element={<PostEditor />} />
+            <Route path="/posts/:slug" element={<PostEditor />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contacts" element={<Contacts />} />
+            <Route path="/contacts/:id/edit" element={<ContactEdit />} />
+            <Route path="/seo" element={<SEO />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   )
 }

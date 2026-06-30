@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useApp } from '../AppContext'
 import { getAboutContent } from '@/lib/about'
 import type { AboutContent } from '@/lib/about'
@@ -9,8 +9,20 @@ import Reveal from './Reveal'
 export default function HeroSection() {
   const { dict, locale } = useApp()
   const [about, setAbout] = useState<AboutContent | null>(null)
+  const [avatarLoaded, setAvatarLoaded] = useState(false)
+  const imgRef = useRef<HTMLImageElement | null>(null)
   useEffect(() => { getAboutContent().then(setAbout) }, [])
   const a = about
+
+  useEffect(() => {
+    if (!a?.avatarUrl) { setAvatarLoaded(true); return }
+    const img = new Image()
+    imgRef.current = img
+    img.onload = () => setAvatarLoaded(true)
+    img.src = a.avatarUrl
+    if (img.complete) setAvatarLoaded(true)
+    return () => { img.onload = null }
+  }, [a?.avatarUrl])
 
   const bgStyle: React.CSSProperties | undefined =
     a?.heroBgImage || a?.heroBgColor
@@ -27,7 +39,10 @@ export default function HeroSection() {
     <div className="hero-dark" style={{ ...bgStyle, color: textColor }}>
       <Reveal>
         {a?.avatarUrl ? (
-          <div className="avatar-img" style={{ backgroundImage: `url(${a.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '50%', width: 80, height: 80, margin: '0 auto' }} />
+          <div
+            className={`avatar-img${avatarLoaded ? ' img-fade-in' : ' img-shimmer'}`}
+            style={avatarLoaded ? { backgroundImage: `url(${a.avatarUrl})` } : undefined}
+          />
         ) : (
           <div className="avatar-mono">P</div>
         )}

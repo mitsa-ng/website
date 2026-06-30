@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useApp, type PageSection } from '../AppContext'
 import { transformKeys } from '@/lib/transform'
 
@@ -14,14 +15,21 @@ const SECTIONS: { key: PageSection }[] = [
 ]
 
 export default function NavDesktop() {
-  const { dict, activePage, setActivePage, setDrawerOpen, toggleTheme, theme, locale, setLocale } = useApp()
+  const pathname = usePathname()
+  const router = useRouter()
+  const { dict, locale, setActivePage, setDrawerOpen, toggleTheme, theme, setLocale } = useApp()
   const [brand, setBrand] = useState('')
+  const [siteIcon, setSiteIcon] = useState('')
+  const isHome = pathname === '/' || pathname === ''
 
   useEffect(() => {
     fetch('/api/settings')
       .then(r => r.json())
       .then(d => transformKeys(d) as Record<string, any>)
-      .then(d => { if (d.brandText) setBrand(d.brandText) })
+      .then(d => {
+        if (d.brandText) setBrand(d.brandText)
+        if (d.siteIcon) setSiteIcon(d.siteIcon)
+      })
       .catch(() => {})
   }, [])
 
@@ -34,17 +42,41 @@ export default function NavDesktop() {
     contact: dict.nav.contact,
   }
 
+  const handleNav = (key: PageSection) => {
+    if (isHome) {
+      setActivePage(key)
+    } else {
+      router.push(`/${locale}/${key}`)
+    }
+  }
+
+  const isActive = (key: string) => {
+    if (isHome) return false
+    return pathname === `/${key}` || pathname.startsWith(`/${key}/`)
+  }
+
   return (
     <div className="nav-desktop">
       <div className="brand">
+        {siteIcon ? (
+          <span className="brand-mono" style={{ overflow: 'hidden' }}>
+            <img src={siteIcon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          </span>
+        ) : (
+          <span className="brand-mono">P</span>
+        )}
         {brand || 'Personal Web'}
       </div>
       <div className="nav-links">
         {SECTIONS.map(s => (
           <button
             key={s.key}
-            className={activePage === s.key ? 'active' : ''}
-            onClick={() => setActivePage(s.key)}
+            className={
+              isHome
+                ? ''
+                : isActive(s.key) ? 'active' : ''
+            }
+            onClick={() => handleNav(s.key)}
           >
             {labels[s.key]}
           </button>

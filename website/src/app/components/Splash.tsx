@@ -6,18 +6,31 @@ let shown = false
 
 export default function Splash() {
   const [hidden, setHidden] = useState(shown)
+  const [icon, setIcon] = useState('')
 
   useEffect(() => {
     if (shown) return
     shown = true
-    const timer = setTimeout(() => setHidden(true), 800)
-    return () => clearTimeout(timer)
+
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(d => { if (d.site_icon) setIcon(d.site_icon) })
+      .catch(() => {})
+
+    const minShow = setTimeout(() => setHidden(true), 1500)
+    return () => clearTimeout(minShow)
   }, [])
 
   return (
     <div className={`splash${hidden ? ' hidden' : ''}`}>
-      <div className="mark"><span>P</span></div>
-      <p>Personal Web</p>
+      <div className="mark">
+        {icon ? (
+          <img src={icon} alt="" className="splash-icon" />
+        ) : (
+          <span>N</span>
+        )}
+      </div>
+      <p>Made by Nati</p>
     </div>
   )
 }
