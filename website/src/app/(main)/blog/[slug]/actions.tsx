@@ -14,6 +14,7 @@ export default function BlogActions({
 }) {
   const [copied, setCopied] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState('')
+  const [imageOk, setImageOk] = useState(false)
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
 
   useEffect(() => {
@@ -25,6 +26,14 @@ export default function BlogActions({
       })
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (!avatarUrl) return
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => setImageOk(true)
+    img.src = avatarUrl
+  }, [avatarUrl])
 
   const handleCopy = async () => {
     try {
@@ -44,13 +53,13 @@ export default function BlogActions({
           size={160}
           level="M"
           fgColor="#0071e3"
-          bgColor="transparent"
           marginSize={2}
-          imageSettings={avatarUrl ? {
+          imageSettings={imageOk ? {
             src: avatarUrl,
             width: 32,
             height: 32,
             excavate: true,
+            crossOrigin: 'anonymous',
           } : undefined}
         />
       </div>
