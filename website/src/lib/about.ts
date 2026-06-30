@@ -21,7 +21,19 @@ export interface AboutContent {
 
 let promise: Promise<AboutContent | null> | null = null
 
+function fromSettings(): AboutContent | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const s = (window as any).__SETTINGS__
+    if (!s?.about_content) return null
+    const c = typeof s.about_content === 'string' ? JSON.parse(s.about_content) : s.about_content
+    return c as AboutContent
+  } catch { return null }
+}
+
 export function getAboutContent(): Promise<AboutContent | null> {
+  const cached = fromSettings()
+  if (cached) return Promise.resolve(cached)
   if (!promise) {
     promise = fetch('/api/settings')
       .then(r => r.json())

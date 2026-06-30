@@ -10,6 +10,7 @@ export default function HeroSection() {
   const { dict, locale } = useApp()
   const [about, setAbout] = useState<AboutContent | null>(null)
   const [avatarLoaded, setAvatarLoaded] = useState(false)
+  const [bgLoaded, setBgLoaded] = useState(false)
   const imgRef = useRef<HTMLImageElement | null>(null)
   useEffect(() => { getAboutContent().then(setAbout) }, [])
   const a = about
@@ -24,12 +25,21 @@ export default function HeroSection() {
     return () => { img.onload = null }
   }, [a?.avatarUrl])
 
+  useEffect(() => {
+    if (!a?.heroBgImage) { setBgLoaded(true); return }
+    const img = new Image()
+    img.onload = () => setBgLoaded(true)
+    img.src = a.heroBgImage
+    if (img.complete) setBgLoaded(true)
+    return () => { img.onload = null }
+  }, [a?.heroBgImage])
+
   const bgStyle: React.CSSProperties | undefined =
     a?.heroBgImage || a?.heroBgColor
       ? {
-          background: a?.heroBgImage
+          background: bgLoaded && a?.heroBgImage
             ? `url(${a.heroBgImage}) center/cover ${a?.heroBgColor || '#000'}`
-            : a?.heroBgColor,
+            : a?.heroBgColor || '#000',
         }
       : undefined
 
@@ -38,14 +48,10 @@ export default function HeroSection() {
   return (
     <div className="hero-dark" style={{ ...bgStyle, color: textColor }}>
       <Reveal>
-        {a?.avatarUrl ? (
-          <div
-            className={`avatar-img${avatarLoaded ? ' img-fade-in' : ' img-shimmer'}`}
-            style={avatarLoaded ? { backgroundImage: `url(${a.avatarUrl})` } : undefined}
-          />
-        ) : (
-          <div className="avatar-mono">P</div>
-        )}
+        <div
+          className={`avatar-img${a?.avatarUrl ? (avatarLoaded ? ' img-fade-in' : ' img-shimmer') : ' img-shimmer'}`}
+          style={a?.avatarUrl && avatarLoaded ? { backgroundImage: `url(${a.avatarUrl})` } : undefined}
+        />
       </Reveal>
       <Reveal delay={1}>
         <h1>{a ? (locale === 'zh-TW' ? a.nameZh : a.nameEn) : dict.hero.name}</h1>
