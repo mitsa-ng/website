@@ -3,6 +3,22 @@
 import { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 
+function toRawUrl(url: string): string {
+  try {
+    const u = new URL(url)
+    if (u.hostname === 'github.com' && u.pathname.includes('/blob/')) {
+      const parts = u.pathname.split('/')
+      const blobIndex = parts.indexOf('blob')
+      const user = parts[1]
+      const repo = parts[2]
+      const branch = parts[blobIndex + 1]
+      const path = parts.slice(blobIndex + 2).join('/')
+      return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`
+    }
+  } catch {}
+  return url
+}
+
 export default function BlogActions({
   slug,
   fingerprint,
@@ -13,7 +29,7 @@ export default function BlogActions({
   content: string
 }) {
   const [copied, setCopied] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState('')
+  const [rawUrl, setRawUrl] = useState('')
   const [imageOk, setImageOk] = useState(false)
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
 
@@ -22,18 +38,18 @@ export default function BlogActions({
       .then(r => r.json())
       .then(d => {
         const about = typeof d.about_content === 'string' ? JSON.parse(d.about_content) : d.about_content
-        if (about?.avatarUrl) setAvatarUrl(about.avatarUrl)
+        if (about?.avatarUrl) setRawUrl(toRawUrl(about.avatarUrl))
       })
       .catch(() => {})
   }, [])
 
   useEffect(() => {
-    if (!avatarUrl) return
+    if (!rawUrl) return
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => setImageOk(true)
-    img.src = avatarUrl
-  }, [avatarUrl])
+    img.src = rawUrl
+  }, [rawUrl])
 
   const handleCopy = async () => {
     try {
@@ -55,7 +71,7 @@ export default function BlogActions({
           fgColor="#0071e3"
           marginSize={2}
           imageSettings={imageOk ? {
-            src: avatarUrl,
+            src: rawUrl,
             width: 32,
             height: 32,
             excavate: true,
