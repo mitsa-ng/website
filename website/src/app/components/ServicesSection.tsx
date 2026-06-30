@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter, usePathname } from 'next/navigation'
 import { useApp } from '../AppContext'
 import { usePoll } from '@/lib/usePoll'
 import Reveal from './Reveal'
@@ -15,8 +16,11 @@ interface Service {
 }
 
 export default function ServicesSection() {
-  const { dict, locale, setActivePage } = useApp()
+  const router = useRouter()
+  const pathname = usePathname()
+  const { dict, locale, setActivePage, setNavigating } = useApp()
   const { data: services } = usePoll<Service[]>('/api/services')
+  const isHome = pathname === '/' || pathname === ''
 
   const titleKey = locale === 'zh-TW' ? 'titleZh' as const : 'titleEn' as const
   const descKey = locale === 'zh-TW' ? 'descriptionZh' as const : 'descriptionEn' as const
@@ -34,7 +38,14 @@ export default function ServicesSection() {
               <h3>{s[titleKey]}</h3>
               <p>{s[descKey]}</p>
               <div className="price">{s.price}</div>
-              <button className="btn btn-primary" onClick={() => setActivePage('contact')}>{dict.services.contact}</button>
+              <button className="btn btn-primary" onClick={() => {
+                if (isHome) {
+                  setActivePage('contact')
+                } else {
+                  setNavigating(true)
+                  router.push(`/${locale}/contact`)
+                }
+              }}>{dict.services.contact}</button>
             </div>
           </Reveal>
         ))}
