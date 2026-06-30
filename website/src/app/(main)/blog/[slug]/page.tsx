@@ -17,9 +17,23 @@ interface PostRow {
   content_en: string
   excerpt_zh: string
   excerpt_en: string
-  published_at: string
+  published_at: Date | null
   fingerprint_zh: string | null
   fingerprint_en: string | null
+}
+
+function formatDate(d: Date | string | null): string {
+  if (!d) return ''
+  const date = typeof d === 'string' ? new Date(d) : d
+  if (isNaN(date.getTime())) return ''
+  return date.toISOString().slice(0, 10)
+}
+
+function toISO(d: Date | string | null): string | undefined {
+  if (!d) return undefined
+  const date = typeof d === 'string' ? new Date(d) : d
+  if (isNaN(date.getTime())) return undefined
+  return date.toISOString()
 }
 
 export async function generateStaticParams() {
@@ -57,7 +71,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         title: `${title} | Nati's Web`,
         description: description || undefined,
         type: 'article',
-        publishedTime: post.published_at || undefined,
+        publishedTime: toISO(post.published_at),
       },
       twitter: {
         card: 'summary_large_image',
@@ -91,7 +105,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const title = isZh ? post.title_zh : post.title_en
   const content = isZh ? post.content_zh : post.content_en
   const fingerprint = isZh ? post.fingerprint_zh : post.fingerprint_en
-  const publishedAt = post.published_at?.slice(0, 10) || ''
+  const publishedAt = formatDate(post.published_at)
 
   return (
     <div className="page active page-entering" style={{ position: 'relative' }}>
