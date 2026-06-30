@@ -34,7 +34,7 @@ const TABS: { key: PageSection; Icon: React.FC }[] = [
 export default function TabBar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { dict, locale, activePage, setActivePage } = useApp()
+  const { dict, locale, activePage, setActivePage, setNavigating } = useApp()
   const isHome = pathname === '/' || pathname === ''
 
   const labels: Record<PageSection, string> = {
@@ -50,6 +50,7 @@ export default function TabBar() {
     if (isHome) {
       setActivePage(key)
     } else {
+      setNavigating(true)
       router.push(`/${locale}/${key}`)
     }
   }

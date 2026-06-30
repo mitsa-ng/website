@@ -1,28 +1,21 @@
 'use client'
 
+import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
+import { useApp } from '../AppContext'
 
 export default function RouteLoader() {
   const pathname = usePathname()
-  const [loading, setLoading] = useState(false)
-  const prevPath = useRef(pathname)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { navigating, setNavigating } = useApp()
 
   useEffect(() => {
-    if (prevPath.current !== pathname) {
-      prevPath.current = pathname
-      setLoading(true)
-      if (timerRef.current) clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => setLoading(false), 400)
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
+    if (navigating) {
+      setNavigating(false)
     }
   }, [pathname])
 
   return (
-    <div className={`route-loader${loading ? ' active' : ''}`}>
+    <div className={`route-loader${navigating ? ' active' : ''}`}>
       <div className="route-loader-bar" />
     </div>
   )

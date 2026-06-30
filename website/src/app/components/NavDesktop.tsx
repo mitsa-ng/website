@@ -18,7 +18,7 @@ const SECTIONS: { key: PageSection }[] = [
 export default function NavDesktop() {
   const pathname = usePathname()
   const router = useRouter()
-  const { dict, locale, setActivePage, setDrawerOpen, toggleTheme, theme, setLocale } = useApp()
+  const { dict, locale, setActivePage, setDrawerOpen, toggleTheme, theme, setLocale, setNavigating } = useApp()
   const [brand, setBrand] = useState('')
   const [siteIcon, setSiteIcon] = useState('')
   const isHome = pathname === '/' || pathname === ''
@@ -45,6 +45,7 @@ export default function NavDesktop() {
     if (isHome) {
       setActivePage(key)
     } else {
+      setNavigating(true)
       router.push(`/${locale}/${key}`)
     }
   }

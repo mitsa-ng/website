@@ -20,6 +20,7 @@ interface AppState {
   activePage: PageSection
   drawerOpen: boolean
   toast: { message: string; type: ToastType } | null
+  navigating: boolean
 }
 
 interface AppContextType extends AppState {
@@ -28,6 +29,7 @@ interface AppContextType extends AppState {
   setActivePage: (p: PageSection) => void
   setDrawerOpen: (o: boolean) => void
   showToast: (message: string, type?: ToastType) => void
+  setNavigating: (v: boolean) => void
 }
 
 const AppContext = createContext<AppContextType | null>(null)
@@ -40,6 +42,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [activePage, setActivePage] = useState<PageSection>('about')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+  const [navigating, setNavigating] = useState(false)
   const drawerNavigationRef = useRef<(key: string) => void | undefined>(undefined)
 
   useEffect(() => {
@@ -85,8 +88,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      locale, dict, theme, activePage, drawerOpen, toast,
-      setLocale, toggleTheme, setActivePage, setDrawerOpen, showToast,
+      locale, dict, theme, activePage, drawerOpen, toast, navigating,
+      setLocale, toggleTheme, setActivePage, setDrawerOpen, showToast, setNavigating,
     }}>
       {children}
     </AppContext.Provider>
