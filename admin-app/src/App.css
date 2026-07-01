@@ -346,6 +346,10 @@ body { font: 14px/1.5 var(--font); background: var(--bg); color: var(--fg); -web
 .cell-mono { font-family: 'SF Mono', 'Menlo', monospace; font-size: 13px; }
 .cell-muted { color: var(--muted); font-size: 13px; }
 .cell-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.data-table tr.drop-target td { background: rgba(0,113,227,0.08) !important; border-top: 2px solid var(--accent); }
+.drag-handle { display: inline-block; opacity: 0.5; transition: opacity var(--transition); }
+tr:hover .drag-handle { opacity: 1; }
+
 
 /* ===== Card Form ===== */
 .card-form {
@@ -399,8 +403,9 @@ body { font: 14px/1.5 var(--font); background: var(--bg); color: var(--fg); -web
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { opacity: 0.85; }
 .btn-sm { padding: 5px 12px; font-size: 12px; min-height: 28px; }
-.btn-text { background: none; color: var(--accent); padding: 6px 4px; }
+.btn-text { background: none; border: none; color: var(--accent); padding: 6px 4px; cursor: pointer; font-size: 11px; line-height: 1; }
 .btn-text:hover { opacity: 0.8; }
+.btn-text:disabled { opacity: 0.3; cursor: default; }
 .btn-block { width: 100%; }
 
 /* ===== Badges ===== */

@@ -246,6 +246,7 @@ export interface Project {
   tags: string[]
   link?: string | null
   imageUrl?: string | null
+  sortOrder: number
   draft: boolean
   published: boolean
 }

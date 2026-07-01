@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from 'react'
-import { apiGet, apiPost, apiPut, apiDelete, type Project } from '../lib/api'
+import { useEffect, useState, useRef, useCallback } from 'react'
+import { apiGet, apiPost, apiPut, apiDelete, apiPatch, type Project } from '../lib/api'
 import { useLocale } from '../lib/LocaleContext'
 
-const empty = { titleZh: '', titleEn: '', descriptionZh: '', descriptionEn: '', link: '', imageUrl: '', tags: [] as string[], draft: true, published: false }
+const empty = { titleZh: '', titleEn: '', descriptionZh: '', descriptionEn: '', link: '', imageUrl: '', tags: [] as string[], draft: true, published: false, sortOrder: 0 }
 
 export default function Projects() {
   const { t } = useLocale()
@@ -12,6 +12,8 @@ export default function Projects() {
   const [showForm, setShowForm] = useState(false)
   const [tagInput, setTagInput] = useState('')
   const [editTags, setEditTags] = useState<string[]>([])
+  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
   const tagRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { apiGet<Project[]>('/api/projects?drafts=true').then(setItems).catch(() => setItems([])) }, [])
@@ -82,6 +84,64 @@ export default function Projects() {
     setItems(p => (p || []).filter(x => x.id !== id))
   }
 
+  const persistOrder = useCallback(async (ordered: Project[]) => {
+    const base = ordered.length * 10
+    const orders = ordered.map((p, i) => ({ id: p.id, sortOrder: base - i * 10 }))
+    try {
+      await apiPatch('/api/projects/reorder', { orders })
+    } catch (e: any) {
+      alert('Reorder failed: ' + (e.message || e))
+    }
+  }, [])
+
+  const handleDragStart = (idx: number) => {
+    setDragIdx(idx)
+  }
+
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (idx !== dragIdx) setDragOverIdx(idx)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverIdx(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIdx: number) => {
+    e.preventDefault()
+    if (dragIdx === null || dragIdx === dropIdx || !items) {
+      setDragIdx(null)
+      setDragOverIdx(null)
+      return
+    }
+
+    const updated = [...items]
+    const [moved] = updated.splice(dragIdx, 1)
+    updated.splice(dropIdx, 0, moved)
+
+    setItems(updated)
+    setDragIdx(null)
+    setDragOverIdx(null)
+    persistOrder(updated)
+  }
+
+  const handleMoveUp = (idx: number) => {
+    if (!items || idx === 0) return
+    const updated = [...items]
+    ;[updated[idx - 1], updated[idx]] = [updated[idx], updated[idx - 1]]
+    setItems(updated)
+    persistOrder(updated)
+  }
+
+  const handleMoveDown = (idx: number) => {
+    if (!items || idx === items.length - 1) return
+    const updated = [...items]
+    ;[updated[idx], updated[idx + 1]] = [updated[idx + 1], updated[idx]]
+    setItems(updated)
+    persistOrder(updated)
+  }
+
   return (
     <div className="page">
       <div className="page-header-row">
@@ -136,10 +196,10 @@ export default function Projects() {
       )}
 
       <table className="data-table">
-        <thead><tr><th>{t.projects.titleCol}</th><th>{t.projects.tagsCol}</th><th></th></tr></thead>
+        <thead><tr><th style={{ width: 40 }}></th><th>{t.projects.titleCol}</th><th>{t.projects.tagsCol}</th><th style={{ width: 80 }}>{t.projects.orderCol}</th><th style={{ width: 100 }}></th></tr></thead>
         <tbody>
           {items === null && [1,2,3].map(i => (
-            <tr key={i}><td colSpan={3}>
+            <tr key={i}><td colSpan={5}>
               <div className="skeleton-table-row">
                 <div className="skeleton skeleton-table-cell" />
                 <div className="skeleton skeleton-table-cell-sm" />
@@ -147,16 +207,35 @@ export default function Projects() {
               </div>
             </td></tr>
           ))}
-          {items?.map(p => (
-            <tr key={p.id}>
-              <td>{p.titleEn || p.titleZh}</td>
-              <td>{(Array.isArray(p.tags) ? p.tags : []).join(', ')}</td>
-              <td className="cell-actions">
-                <button className="btn btn-sm" onClick={() => openEdit(p)}>{t.projects.edit}</button>
-                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)}>{t.projects.delete}</button>
-              </td>
-            </tr>
-          ))}
+          {items?.map((p, idx) => {
+            const isOver = dragOverIdx === idx && dragIdx !== null && dragOverIdx !== dragIdx
+            return (
+              <tr
+                key={p.id}
+                draggable
+                onDragStart={() => handleDragStart(idx)}
+                onDragOver={e => handleDragOver(e, idx)}
+                onDragLeave={handleDragLeave}
+                onDrop={e => handleDrop(e, idx)}
+                style={{ opacity: dragIdx === idx ? 0.5 : 1, cursor: 'grab' }}
+                className={isOver ? 'drop-target' : ''}
+              >
+                <td style={{ textAlign: 'center', cursor: 'grab', fontSize: 16, userSelect: 'none' }}>
+                  <span className="drag-handle">⠿</span>
+                </td>
+                <td>{p.titleEn || p.titleZh}</td>
+                <td>{(Array.isArray(p.tags) ? p.tags : []).join(', ')}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  <button className="btn btn-sm btn-text" onClick={() => handleMoveUp(idx)} disabled={idx === 0} title="Move up">▲</button>
+                  <button className="btn btn-sm btn-text" onClick={() => handleMoveDown(idx)} disabled={idx === items.length - 1} title="Move down">▼</button>
+                </td>
+                <td className="cell-actions">
+                  <button className="btn btn-sm" onClick={() => openEdit(p)}>{t.projects.edit}</button>
+                  <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)}>{t.projects.delete}</button>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
