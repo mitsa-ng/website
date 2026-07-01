@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { apiGet, apiPost, apiPut, apiDelete, apiPatch, type Project } from '../lib/api'
+import { apiGet, apiPost, apiPut, apiDelete, type Project } from '../lib/api'
 import { useLocale } from '../lib/LocaleContext'
 
 const empty = { titleZh: '', titleEn: '', descriptionZh: '', descriptionEn: '', link: '', imageUrl: '', tags: [] as string[], draft: true, published: false, sortOrder: 0 }
@@ -88,7 +88,7 @@ export default function Projects() {
     const base = ordered.length * 10
     const orders = ordered.map((p, i) => ({ id: p.id, sortOrder: base - i * 10 }))
     try {
-      await apiPatch('/api/projects/reorder', { orders })
+      await apiPut('/api/projects/reorder', { orders })
     } catch (e: any) {
       alert('Reorder failed: ' + (e.message || e))
     }

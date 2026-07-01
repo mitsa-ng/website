@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { corsResponse } from '@/lib/cors';
 import { requireAdmin } from '@/lib/auth';
 
-export async function PATCH(req: Request) {
+export async function PUT(req: Request) {
   const authError = await requireAdmin(req);
   if (authError) return authError;
 
