@@ -5,19 +5,25 @@ import { corsResponse } from '@/lib/cors';
 export async function POST(req: Request) {
   try {
     let label = 'admin';
+    let force = false;
     try {
       const body = await req.json();
       if (body.label) label = body.label;
+      if (body.force) force = true;
     } catch {
-      // no body — use default label
+      // no body — use defaults
     }
 
     const existing = await query<{ id: number }>(
       'SELECT id FROM api_keys WHERE revoked = false LIMIT 1'
     );
-    
+
     if (existing.length > 0) {
-      return corsResponse({ error: 'api key already exists' }, { status: 400 });
+      if (force) {
+        await query('UPDATE api_keys SET revoked = true WHERE revoked = false');
+      } else {
+        return corsResponse({ error: 'api key already exists' }, { status: 400 });
+      }
     }
 
     const { raw, hash, prefix } = generateApiKey(label);

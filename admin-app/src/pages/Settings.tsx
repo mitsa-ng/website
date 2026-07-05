@@ -158,7 +158,7 @@ export default function Settings() {
   const handleRegen = async () => {
     if (!confirm(t.settings.confirmRegen)) return
     await setServerUrl(url)
-    const raw = await initApiKey()
+    const raw = await initApiKey(url, true)
     await setApiKey(raw)
     setKeyState(raw)
     setSaved(true)

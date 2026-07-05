@@ -201,9 +201,14 @@ function absUrl(base: string, path: string): string {
   return path
 }
 
-export async function initApiKey(serverUrl?: string): Promise<string> {
+export async function initApiKey(serverUrl?: string, force?: boolean): Promise<string> {
   const base = serverUrl !== undefined ? serverUrl : await getServerUrl()
-  const res = await platformFetch(absUrl(base, '/api/admin/init'), { method: 'POST' })
+  const body = force ? JSON.stringify({ force: true }) : undefined
+  const res = await platformFetch(absUrl(base, '/api/admin/init'), {
+    method: 'POST',
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body,
+  })
   const data = await res.json()
   return data.raw
 }
