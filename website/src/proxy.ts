@@ -45,8 +45,8 @@ export function proxy(request: NextRequest) {
     return cors(NextResponse.next())
   }
 
-  if (pathname.includes('.') && !pathname.startsWith('/')) {
-    return NextResponse.next()
+  if (pathname === '/sitemap.xml' || pathname === '/robots.txt') {
+    return cors(NextResponse.next())
   }
 
   const pathLocale = LOCALES.find(
