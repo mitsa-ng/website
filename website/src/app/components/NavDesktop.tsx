@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useApp, type PageSection } from '../AppContext'
 import { transformKeys } from '@/lib/transform'
-import Img from './Img'
-
 const SECTIONS: { key: PageSection }[] = [
   { key: 'about' },
   { key: 'portfolio' },
@@ -20,7 +18,6 @@ export default function NavDesktop() {
   const router = useRouter()
   const { dict, locale, setActivePage, setDrawerOpen, toggleTheme, theme, setLocale, setNavigating } = useApp()
   const [brand, setBrand] = useState('')
-  const [siteIcon, setSiteIcon] = useState('')
   const isHome = pathname === '/' || pathname === ''
 
   useEffect(() => {
@@ -28,7 +25,6 @@ export default function NavDesktop() {
     if (settings) {
       const normalized = transformKeys(settings) as Record<string, any>
       if (normalized.brandText) setBrand(normalized.brandText)
-      if (normalized.siteIcon) setSiteIcon(normalized.siteIcon)
     }
   }, [])
 
@@ -58,13 +54,6 @@ export default function NavDesktop() {
   return (
     <div className="nav-desktop">
       <div className="brand">
-        {siteIcon ? (
-          <span className="brand-mono" style={{ overflow: 'hidden' }}>
-            <Img src={siteIcon} alt="" wrapStyle={{ width: '100%', height: '100%' }} />
-          </span>
-        ) : (
-          <span className="brand-mono">P</span>
-        )}
         {brand || 'Personal Web'}
       </div>
       <div className="nav-links">

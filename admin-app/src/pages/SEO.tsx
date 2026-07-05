@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocale } from '../lib/LocaleContext'
-import { apiGet, apiPut } from '../lib/api'
+import { getApiKey, getServerUrl } from '../lib/api'
 
 interface SeoForm {
   site_title: string
@@ -14,6 +14,19 @@ interface SeoForm {
   theme_color: string
   author_name: string
   author_url: string
+}
+
+async function apiUrl(path: string) {
+  const base = await getServerUrl()
+  return `${base}${path}`
+}
+
+async function apiHeaders() {
+  const key = await getApiKey()
+  return {
+    'Content-Type': 'application/json',
+    ...(key ? { 'X-Api-Key': key } : {}),
+  } as Record<string, string>
 }
 
 export default function SEO() {
@@ -33,16 +46,31 @@ export default function SEO() {
   })
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState<'idle' | 'saved' | 'error'>('idle')
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    apiGet<any>('/api/settings').then(data => {
-      if (!data || data.error) return
-      setForm(prev => ({
-        ...prev,
-        ...data,
-      }))
-    })
+    apiUrl('/api/settings').then(url =>
+      fetch(url, { headers: {} }).then(r => r.json()).then(data => {
+        if (!data || data.error) return
+        setForm(prev => ({ ...prev, ...data }))
+        setLoaded(true)
+      })
+    )
   }, [])
+
+  useEffect(() => {
+    if (!loaded) return
+    const id = setInterval(async () => {
+      const url = await apiUrl('/api/settings')
+      const h = await apiHeaders()
+      try {
+        const r = await fetch(url, { headers: h })
+        const data = await r.json()
+        if (data && !data.error) setForm(prev => ({ ...prev, ...data }))
+      } catch {}
+    }, 5000)
+    return () => clearInterval(id)
+  }, [loaded])
 
   const handleChange = (key: keyof SeoForm, value: string) => {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -53,12 +81,11 @@ export default function SEO() {
     setSaving(true)
     setStatus('idle')
     try {
-      const res = await apiPut<any>('/api/settings', form)
-      if (res && !res.error) {
-        setStatus('saved')
-      } else {
-        setStatus('error')
-      }
+      const url = await apiUrl('/api/settings')
+      const h = await apiHeaders()
+      const r = await fetch(url, { method: 'PUT', headers: h, body: JSON.stringify(form) })
+      if (r.ok) setStatus('saved')
+      else setStatus('error')
     } catch {
       setStatus('error')
     } finally {
