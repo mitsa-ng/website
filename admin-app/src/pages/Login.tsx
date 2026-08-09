@@ -9,12 +9,13 @@ interface Props {
 
 export default function Login({ onLogin }: Props) {
   const { t } = useLocale()
-  const [mode, setMode] = useState<'setup' | 'init' | 'enter'>('setup')
+  const [mode, setMode] = useState<'setup' | 'enter'>('setup')
   const [serverUrl, setServerUrlState] = useState('')
   const [apiSecret, setApiSecret] = useState('')
   const [key, setKey] = useState('')
   const [url, setUrl] = useState('')
   const [rotationServerUrl, setRotationServerUrl] = useState('')
+  const [rotationOpen, setRotationOpen] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -140,10 +141,17 @@ export default function Login({ onLogin }: Props) {
             </button>
           </form>
 
-          <button className="btn btn-text btn-block" type="button" onClick={() => { setUrl(serverUrl); setRotationServerUrl(serverUrl); setMode('init'); }} style={{ marginTop: 12, minHeight: 44 }}>
+          <button className="btn btn-text btn-block" type="button" onClick={() => { setUrl(serverUrl); setRotationServerUrl(serverUrl); setRotationOpen(true) }} style={{ marginTop: 12, minHeight: 44 }}>
             {t.rotation.recoveryEntry}
           </button>
         </div>
+        {rotationOpen ? (
+          <AdminKeyRotation
+            serverUrl={rotationServerUrl}
+            onVerified={handleVerifiedRotation}
+            onClose={() => setRotationOpen(false)}
+          />
+        ) : null}
       </div>
     )
   }
@@ -157,34 +165,33 @@ export default function Login({ onLogin }: Props) {
 
         <div className="form-group">
           <label htmlFor="login-server-url">{t.login.serverUrl}</label>
-          <input id="login-server-url" type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder={t.login.serverPlaceholder} disabled={mode === 'init'} />
+          <input id="login-server-url" type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder={t.login.serverPlaceholder} />
         </div>
 
-        {mode === 'enter' ? (
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="login-api-key">{t.login.apiKey}</label>
-              <input id="login-api-key" type="text" value={key} onChange={e => setKey(e.target.value)} placeholder={t.login.apiKeyPlaceholder} />
-            </div>
-            {error && <p className="form-error">{error}</p>}
-            <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
-              {loading ? t.login.verifying : t.login.login}
-            </button>
-            <button className="btn btn-text btn-block" type="button" onClick={() => { setRotationServerUrl(url); setMode('init') }} style={{ marginTop: 8, minHeight: 44 }}>
-              {t.login.firstTime}
-            </button>
-            <button className="btn btn-text btn-block" type="button" onClick={() => setMode('setup')} style={{ marginTop: 8 }}>
-              Change Server
-            </button>
-          </form>
-        ) : (
-          <AdminKeyRotation
-            serverUrl={rotationServerUrl}
-            onVerified={handleVerifiedRotation}
-            onClose={() => setMode('enter')}
-          />
-        )}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="login-api-key">{t.login.apiKey}</label>
+            <input id="login-api-key" type="text" value={key} onChange={e => setKey(e.target.value)} placeholder={t.login.apiKeyPlaceholder} />
+          </div>
+          {error && <p className="form-error">{error}</p>}
+          <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
+            {loading ? t.login.verifying : t.login.login}
+          </button>
+          <button className="btn btn-text btn-block" type="button" onClick={() => { setRotationServerUrl(url); setRotationOpen(true) }} style={{ marginTop: 8, minHeight: 44 }}>
+            {t.login.firstTime}
+          </button>
+          <button className="btn btn-text btn-block" type="button" onClick={() => setMode('setup')} style={{ marginTop: 8 }}>
+            Change Server
+          </button>
+        </form>
       </div>
+      {rotationOpen ? (
+        <AdminKeyRotation
+          serverUrl={rotationServerUrl}
+          onVerified={handleVerifiedRotation}
+          onClose={() => setRotationOpen(false)}
+        />
+      ) : null}
     </div>
   )
 }

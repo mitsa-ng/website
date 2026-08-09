@@ -154,9 +154,16 @@ describe('AdminKeyRotation', () => {
 
     await user.type(screen.getByLabelText('Admin init token'), 'typed-token')
     await user.click(screen.getByRole('button', { name: 'Rotate admin key' }))
+    const dialog = screen.getByRole('dialog')
+    await waitFor(() => expect(document.activeElement).toBe(dialog))
+    expect(dialog.tabIndex).toBe(-1)
+
+    await user.tab()
+    expect(document.activeElement).toBe(dialog)
     await user.keyboard('{Escape}')
 
     expect(onClose).not.toHaveBeenCalled()
-    expect(screen.getByRole('dialog')).toBeTruthy()
+    expect(screen.getByRole('dialog')).toBe(dialog)
+    expect(document.activeElement).toBe(dialog)
   })
 })

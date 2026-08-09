@@ -68,9 +68,28 @@ describe('Login rotation recovery', () => {
     const setupEntry = screen.getByRole('button', { name: 'Don\'t have an API key? Generate one' })
     expect(getComputedStyle(setupEntry).minHeight).toBe('44px')
 
-    await user.click(setupEntry)
-    await user.click((await screen.findAllByRole('button', { name: 'Close' }))[1])
-    const loginEntry = screen.getByRole('button', { name: 'First time? Initialize admin key' })
+    cleanup()
+    vi.mocked(api.getConfig).mockResolvedValueOnce({
+      serverUrl: 'https://admin.example',
+      apiSecret: 'pw_existing_checksum',
+      configuredAt: 1,
+    })
+    render(<LocaleProvider><Login onLogin={vi.fn()} /></LocaleProvider>)
+    const loginEntry = await screen.findByRole('button', { name: 'First time? Initialize admin key' })
     expect(getComputedStyle(loginEntry).minHeight).toBe('44px')
+  })
+
+  it('keeps the real recovery opener mounted and restores focus after closing rotation', async () => {
+    const user = userEvent.setup()
+    render(<LocaleProvider><Login onLogin={vi.fn()} /></LocaleProvider>)
+    const opener = screen.getByRole('button', { name: 'Don\'t have an API key? Generate one' })
+
+    await user.click(opener)
+    await screen.findByRole('dialog')
+    expect(opener.isConnected).toBe(true)
+
+    await user.click(screen.getAllByRole('button', { name: 'Close' })[1])
+    expect(opener.isConnected).toBe(true)
+    expect(document.activeElement).toBe(opener)
   })
 })

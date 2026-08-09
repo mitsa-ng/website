@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from 'react'
 import { rotateAdminApiKey, verifyRotatedApiKey } from '../lib/api'
 import { useLocale } from '../lib/LocaleContext'
 
@@ -28,11 +28,29 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
   const rotationServerUrlRef = useRef<string | null>(null)
   const inFlightRef = useRef(false)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLElement>(null)
   const tokenInputRef = useRef<HTMLInputElement>(null)
   const retryButtonRef = useRef<HTMLButtonElement>(null)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  const clearCandidate = () => {
+    candidateRef.current = null
+    rotationServerUrlRef.current = null
+  }
+
+  const handleClose = () => {
+    if (inFlightRef.current) return
+    clearCandidate()
+    setInitToken('')
+    onCloseRef.current()
+  }
 
   useEffect(() => {
     const overlay = overlayRef.current
+    const dialog = dialogRef.current
+    if (!overlay || !dialog) return
+
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const inertedElements: Array<{ element: HTMLElement; wasInert: boolean }> = []
     let foreground: HTMLElement | null = overlay
@@ -49,9 +67,51 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
       foreground = parent
     }
 
+    const focusInside = (preferLast = false) => {
+      const controls = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+      const target = preferLast ? controls[controls.length - 1] : controls[0]
+      ;(target || dialog).focus()
+    }
+
+    const containFocus = (event: FocusEvent) => {
+      if (event.target instanceof Node && !dialog.contains(event.target)) {
+        event.stopPropagation()
+        focusInside()
+      }
+    }
+
+    const containKeyboard = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        event.stopPropagation()
+        if (inFlightRef.current) dialog.focus()
+        else handleClose()
+        return
+      }
+      if (event.key !== 'Tab') return
+
+      const controls = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+      const activeIndex = controls.indexOf(document.activeElement as HTMLElement)
+      if (controls.length === 0 || activeIndex === -1) {
+        event.preventDefault()
+        const target = event.shiftKey ? controls[controls.length - 1] : controls[0]
+        ;(target || dialog).focus()
+      } else if (event.shiftKey && activeIndex === 0) {
+        event.preventDefault()
+        controls[controls.length - 1].focus()
+      } else if (!event.shiftKey && activeIndex === controls.length - 1) {
+        event.preventDefault()
+        controls[0].focus()
+      }
+    }
+
+    document.addEventListener('focusin', containFocus, true)
+    document.addEventListener('keydown', containKeyboard, true)
     tokenInputRef.current?.focus()
 
     return () => {
+      document.removeEventListener('focusin', containFocus, true)
+      document.removeEventListener('keydown', containKeyboard, true)
       for (const { element, wasInert } of inertedElements) {
         if (!wasInert) element.removeAttribute('inert')
       }
@@ -63,10 +123,9 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
     if (status === 'retry' && !submitting) retryButtonRef.current?.focus()
   }, [status, submitting])
 
-  const clearCandidate = () => {
-    candidateRef.current = null
-    rotationServerUrlRef.current = null
-  }
+  useEffect(() => {
+    if (submitting) dialogRef.current?.focus()
+  }, [submitting])
 
   const persistVerifiedCandidate = async (candidate: string) => {
     try {
@@ -132,45 +191,13 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
     }
   }
 
-  const handleClose = () => {
-    if (inFlightRef.current) return
-    clearCandidate()
-    setInitToken('')
-    onClose()
-  }
-
   const handleOverlayClick = (event: MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) handleClose()
   }
 
-  const handleDialogKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      if (!inFlightRef.current) handleClose()
-      return
-    }
-    if (event.key !== 'Tab') return
-
-    const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
-    if (controls.length === 0) {
-      event.preventDefault()
-      return
-    }
-
-    const first = controls[0]
-    const last = controls[controls.length - 1]
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault()
-      last.focus()
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault()
-      first.focus()
-    }
-  }
-
   return (
     <div ref={overlayRef} className="modal-overlay" onClick={handleOverlayClick}>
-      <section className="modal" role="dialog" aria-modal="true" aria-labelledby="admin-key-rotation-title" onKeyDown={handleDialogKeyDown}>
+      <section ref={dialogRef} className="modal" role="dialog" aria-modal="true" aria-labelledby="admin-key-rotation-title" tabIndex={-1}>
         <div className="modal-header">
           <h3 id="admin-key-rotation-title">{t.rotation.title}</h3>
           <button className="modal-close" type="button" onClick={handleClose} disabled={submitting} aria-label={t.rotation.close} style={{ minHeight: 44, minWidth: 44 }}>&times;</button>
