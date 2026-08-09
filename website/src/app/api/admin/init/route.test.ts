@@ -62,6 +62,7 @@ describe('POST /api/admin/init', () => {
     expect(response.status).toBe(200);
     expect(mocks.transaction).toHaveBeenCalledTimes(1);
     expect(transactionQueries).toEqual([
+      'SELECT pg_advisory_xact_lock(274185901)',
       'SELECT id FROM api_keys WHERE revoked = false LIMIT 1',
       'UPDATE api_keys SET revoked = true WHERE revoked = false',
       'INSERT INTO api_keys (key_hash, key_prefix, label) VALUES ($1, $2, $3)',
@@ -74,6 +75,7 @@ describe('POST /api/admin/init', () => {
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({ error: 'api key already exists' });
     expect(transactionQueries).toEqual([
+      'SELECT pg_advisory_xact_lock(274185901)',
       'SELECT id FROM api_keys WHERE revoked = false LIMIT 1',
     ]);
   });

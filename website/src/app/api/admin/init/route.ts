@@ -36,6 +36,9 @@ export async function POST(req: Request) {
     }
 
     const apiKey = await transaction(async query => {
+      // Serialize all init attempts, including the empty-table case where row
+      // locks cannot protect a missing active key.
+      await query('SELECT pg_advisory_xact_lock(274185901)');
       const existing = await query<{ id: number }>(
         'SELECT id FROM api_keys WHERE revoked = false LIMIT 1'
       );
