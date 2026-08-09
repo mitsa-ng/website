@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { createHash } from 'crypto'
 import { useApp } from '@/app/AppContext'
 import { transformKeys } from '@/lib/transform'
 import { QRCodeSVG } from 'qrcode.react'
@@ -53,13 +52,20 @@ export default function VerifyPage() {
   const title = locale === 'zh-TW' ? post?.titleZh : post?.titleEn
   const fingerprint = locale === 'zh-TW' ? post?.fingerprintZh : post?.fingerprintEn
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (!pastedContent.trim() || !fingerprint) return
     if (fingerprintMethod === 'signature') {
       setStatus('mismatch')
       return
     }
-    const hash = createHash('sha256').update(pastedContent).digest('hex')
+    // Use the Web Crypto API (browser-native) instead of Node's crypto
+    // module, which is unavailable in client components at runtime.
+    // Output is lowercase hex to match the server-side SHA-256 fingerprint.
+    const data = new TextEncoder().encode(pastedContent)
+    const digest = await crypto.subtle.digest('SHA-256', data)
+    const hash = [...new Uint8Array(digest)]
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
     setStatus(hash === fingerprint ? 'match' : 'mismatch')
   }
 

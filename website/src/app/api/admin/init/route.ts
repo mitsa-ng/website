@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     const res = corsResponse({ raw, label, warning: 'save this key now, it will not be shown again' });
     if (!initToken) {
-      res.headers.set('X-Setup-Warning', 'ADMIN_INIT_TOKEN not set — init is unguarded');
+      res.headers.set('X-Setup-Warning', 'ADMIN_INIT_TOKEN not set - init is unguarded');
     }
     return res;
   } catch (e) {

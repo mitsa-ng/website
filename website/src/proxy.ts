@@ -1,13 +1,21 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { resolveAllowedOrigin } from '@/lib/cors'
 
 const LOCALES = ['en', 'zh-TW'] as const
 const DEFAULT_LOCALE = 'en'
 
-function cors(res: NextResponse) {
-  res.headers.set('Access-Control-Allow-Origin', '*')
-  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  res.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key, X-Admin-Init-Token')
+const ALLOW_HEADERS = 'Content-Type, X-Api-Key, X-Admin-Init-Token'
+const ALLOW_METHODS = 'GET, POST, PUT, DELETE, OPTIONS'
+
+function cors(res: NextResponse, request: NextRequest) {
+  const origin = request.headers.get('origin')
+  const allowedOrigin = resolveAllowedOrigin(origin)
+  if (allowedOrigin) {
+    res.headers.set('Access-Control-Allow-Origin', allowedOrigin)
+  }
+  res.headers.set('Access-Control-Allow-Methods', ALLOW_METHODS)
+  res.headers.set('Access-Control-Allow-Headers', ALLOW_HEADERS)
   return res
 }
 
@@ -15,12 +23,12 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/favicon') || pathname === '/icon.svg' || pathname === '/manifest.webmanifest') {
-    return cors(NextResponse.next())
+    return cors(NextResponse.next(), request)
   }
 
   if (pathname.startsWith('/api')) {
     if (request.method === 'OPTIONS') {
-      return cors(new NextResponse(null, { status: 204 }))
+      return cors(new NextResponse(null, { status: 204 }), request)
     }
 
     const publicPaths = ['/api/contact', '/api/auth/']
@@ -30,23 +38,23 @@ export function proxy(request: NextRequest) {
     const isPublicGet = publicGetPaths.some(p => (pathname === p || pathname.startsWith(p + '/'))) && request.method === 'GET'
 
     if (isPublic || isPublicGet) {
-      return cors(NextResponse.next())
+      return cors(NextResponse.next(), request)
     }
 
     if (pathname.startsWith('/api/admin/init') || pathname.startsWith('/api/admin/verify')) {
-      return cors(NextResponse.next())
+      return cors(NextResponse.next(), request)
     }
 
     const key = request.headers.get('x-api-key')
     if (!key || key.split('_').length !== 3) {
-      return cors(NextResponse.json({ error: 'unauthorized' }, { status: 401 }))
+      return cors(NextResponse.json({ error: 'unauthorized' }, { status: 401 }), request)
     }
 
-    return cors(NextResponse.next())
+    return cors(NextResponse.next(), request)
   }
 
   if (pathname === '/sitemap.xml' || pathname === '/robots.txt') {
-    return cors(NextResponse.next())
+    return cors(NextResponse.next(), request)
   }
 
   const pathLocale = LOCALES.find(
