@@ -4,14 +4,15 @@ Last run: 2026-08-10 (L2 admin key rotation final-review fix wave)
 
 ## High Priority (loop is acting or waiting on human)
 
-- **P1 fix awaiting review/merge**: branch `fix/p1-security-hardening` in worktree `/Users/mac/Documents/personal-web-p1-fix`. NOT pushed, NOT merged.
-- **⚠️ 破壞性變更提醒**: P1-1 使所有既有 API key 失效（自製雜湊 → scrypt，raw key 不儲存無法遷移）。合併/部署後需用 `force=true` 重新 init（既有流程已支援）。
+- **Admin key rotation awaiting integration approval**: branch `codex/admin-key-rotation` in worktree `/Users/mac/Documents/personal-web-key-rotation`, HEAD `6e0d532`. Implemented, reviewed, tested, NOT pushed, NOT merged, NOT deployed.
+- **Production handoff pending**: merge/push/deploy approval is required before rotating the production key or replacing `/Applications/Personal Web Admin.app`. Rotation also requires the existing `ADMIN_INIT_TOKEN`; never persist or echo it.
+- **P2 awaiting review/merge separately**: branch `fix/p2-validation-deps` in worktree `/Users/mac/Documents/personal-web-p2-fix`, commit `13cf16b`.
 
 ## Watch List
 
-- P2: 引入 zod schema 驗證（型別與 Drizzle schema 脫鉤，最大改動面，留待後續）
+- P2: zod schema 驗證已在 `fix/p2-validation-deps` 完成，待 review/merge。
 - P2: 統一 Postgres driver（website 用 pg Pool、render-service 用 Neon HTTP；Vercel serverless 宜用 Neon HTTP，`@neondatabase/serverless` 已在 deps 但 website 未用）
-- P2: 移除 next-auth 死依賴（website/package.json，零 import，可安全移除）
+- P2: next-auth 死依賴已在 `fix/p2-validation-deps` 移除，待 review/merge。
 
 ## Recent Noise (ignored this run)
 
@@ -45,6 +46,7 @@ Last run: 2026-08-10 (L2 admin key rotation final-review fix wave)
 
 ---
 Run log:
+- 2026-08-10 — Controller verification: admin 32/32 tests + lint + signed DMG build; website 24/24 unit tests + TypeScript + build; Electron smoke opened the real recovery dialog, focused the token field, and restored focus on Escape. Final scoped review PASS; no credentials entered.
 - 2026-08-10 — L2 admin-key-rotation final-review fix wave: init token clears before verification; unmounted/stale rotation continuations are invalidated before verify/persistence; PostgreSQL integration tests require a loopback disposable marker and use one random schema. Admin 32 tests/lint/build, website 18 unit tests/build/TypeScript, and real PostgreSQL 18 integration 2 tests passed. The unique disposable container was removed; no push/merge/deploy/production/P2.
 - 2026-08-09 — L2 P0 fix (deploy blockers), merged to main, pushed
-- 2026-08-09 — L2 P1 fix (security hardening), 9 files modified, verified, awaiting review
+- 2026-08-09 — L2 P1 fix (security hardening), merged to main and pushed (`e1d62d8`)
