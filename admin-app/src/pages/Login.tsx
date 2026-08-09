@@ -13,6 +13,7 @@ export default function Login({ onLogin }: Props) {
   const [apiSecret, setApiSecret] = useState('')
   const [key, setKey] = useState('')
   const [url, setUrl] = useState('')
+  const [initToken, setInitToken] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -77,7 +78,7 @@ export default function Login({ onLogin }: Props) {
   const handleInit = async () => {
     setLoading(true); setError('')
     try {
-      const raw = await initApiKey(url)
+      const raw = await initApiKey(url, false, initToken || undefined)
       await setServerUrl(url)
       await setApiKey(raw)
       saveAsProfile(url, raw)
@@ -183,6 +184,15 @@ export default function Login({ onLogin }: Props) {
           </form>
         ) : (
           <div>
+            <div className="form-group">
+              <label>Deploy Token (optional)</label>
+              <input
+                type="password"
+                value={initToken}
+                onChange={e => setInitToken(e.target.value)}
+                placeholder="Only if your server set ADMIN_INIT_TOKEN"
+              />
+            </div>
             {error && <p className="form-error">{error}</p>}
             <button className="btn btn-primary btn-block" onClick={handleInit} disabled={loading}>
               {loading ? t.login.generating : t.login.generate}

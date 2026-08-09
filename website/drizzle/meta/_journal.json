@@ -15,6 +15,20 @@
       "when": 1782290900000,
       "tag": "0001_add_fingerprint",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782290910000,
+      "tag": "0002_add_site_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782290920000,
+      "tag": "0003_add_projects_image_url",
+      "breakpoints": true
     }
   ]
 }

@@ -7,8 +7,13 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const includeDrafts = searchParams.get('drafts') === 'true';
 
+  // Drafts are admin-only. If an anonymous caller passes ?drafts=true,
+  // silently fall back to published-only rather than leaking drafts.
+  const authError = includeDrafts ? await requireAdmin(req) : null;
+  const authorized = includeDrafts && !authError;
+
   try {
-    const data = includeDrafts
+    const data = authorized
       ? await query<any>('SELECT * FROM projects ORDER BY sort_order DESC')
       : await query<any>('SELECT * FROM projects WHERE published = true AND draft = false ORDER BY sort_order DESC');
     return corsResponse(data);
