@@ -105,6 +105,7 @@ pnpm db:setup      # 執行 drizzle-kit push，建立所有資料表（含 site_
 | `DATABASE_URL` | PostgreSQL 連線字串 |
 | `NEXT_PUBLIC_SITE_URL` | 網站公開網址 |
 | `ADMIN_INIT_TOKEN` | 初始化金鑰令牌（**強烈建議**，防止他人搶先初始化）。產生方式：`node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"`。首次產生管理金鑰後可移除。 |
+| `ALLOWED_ORIGINS` | CORS 白名單（逗號分隔的 origin，如 `https://admin.example.com`）。未設則 fallback 為 `*`（僅建議本機開發）。Electron 桌面 admin app 不帶 Origin，不受此限。 |
 
 ### 2. 部署步驟
 
@@ -286,6 +287,7 @@ curl -X POST http://localhost:3000/api/admin/init
 | `DATABASE_URL` | ✅ | PostgreSQL 連線字串 |
 | `NEXT_PUBLIC_SITE_URL` | | 網站公開網址 |
 | `ADMIN_INIT_TOKEN` | | 初始化金鑰令牌（強烈建議，首次部署後可移除） |
+| `ALLOWED_ORIGINS` | | CORS 白名單（逗號分隔），未設則 fallback `*` |
 
 > 註：早期版本文件曾列出 `AUTH_SECRET`（NextAuth.js 用），但本系統實際使用自訂 API Key 驗證（`X-Api-Key` header），**不需要 `AUTH_SECRET`**。
 

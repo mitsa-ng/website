@@ -13,12 +13,15 @@ export async function POST(req: Request) {
       return corsResponse({ valid: false }, { status: 401 });
     }
 
+    // Filter by prefix so scrypt verification only runs against matching rows.
+    const prefix = key.split('_')[0];
     const result = await query<{
       id: number;
       key_hash: string;
       label: string;
     }>(
-      'SELECT id, key_hash, label FROM api_keys WHERE revoked = false'
+      'SELECT id, key_hash, label FROM api_keys WHERE revoked = false AND key_prefix = $1',
+      [prefix]
     );
 
     for (const row of result) {
