@@ -1,6 +1,6 @@
 # Loop State — My Project
 
-Last run: 2026-08-09 (L2 fix — P1 security hardening)
+Last run: 2026-08-10 (L2 admin key rotation final-review fix wave)
 
 ## High Priority (loop is acting or waiting on human)
 
@@ -45,5 +45,6 @@ Last run: 2026-08-09 (L2 fix — P1 security hardening)
 
 ---
 Run log:
+- 2026-08-10 — L2 admin-key-rotation final-review fix wave: init token clears before verification; unmounted/stale rotation continuations are invalidated before verify/persistence; PostgreSQL integration tests require a loopback disposable marker and use one random schema. Admin 32 tests/lint/build, website 18 unit tests/build/TypeScript, and real PostgreSQL 18 integration 2 tests passed. The unique disposable container was removed; no push/merge/deploy/production/P2.
 - 2026-08-09 — L2 P0 fix (deploy blockers), merged to main, pushed
 - 2026-08-09 — L2 P1 fix (security hardening), 9 files modified, verified, awaiting review

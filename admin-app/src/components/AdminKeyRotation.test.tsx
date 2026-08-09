@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -12,12 +12,20 @@ vi.mock('../lib/api', () => ({
 }))
 
 const renderRotation = (onVerified = vi.fn().mockResolvedValue(undefined), onClose = vi.fn()) => {
-  render(
+  const view = render(
     <LocaleProvider>
       <AdminKeyRotation serverUrl="https://admin.example" onVerified={onVerified} onClose={onClose} />
     </LocaleProvider>,
   )
-  return { onVerified, onClose }
+  return { ...view, onVerified, onClose }
+}
+
+const deferred = <T,>() => {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>(settle => {
+    resolve = settle
+  })
+  return { promise, resolve }
 }
 
 function RotationHarness() {
@@ -49,7 +57,7 @@ describe('AdminKeyRotation', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
     values.clear()
     vi.stubGlobal('localStorage', storage)
   })
@@ -67,6 +75,57 @@ describe('AdminKeyRotation', () => {
 
     expect((screen.getByLabelText('Admin init token') as HTMLInputElement).value).toBe('')
     await waitFor(() => expect(onVerified).toHaveBeenCalledWith('pw_new_checksum'))
+  })
+
+  it('clears the typed token before deferred verification settles', async () => {
+    const user = userEvent.setup()
+    const rotation = deferred<string>()
+    const verification = deferred<'verified'>()
+    rotate.mockReturnValueOnce(rotation.promise)
+    verify.mockReturnValueOnce(verification.promise)
+    const { onVerified } = renderRotation()
+
+    await user.type(screen.getByLabelText('Admin init token'), 'sensitive-input')
+    await user.click(screen.getByRole('button', { name: 'Rotate admin key' }))
+    await act(async () => rotation.resolve('candidate-value'))
+    await waitFor(() => expect(verify.mock.calls.length).toBe(1))
+
+    expect((screen.getByLabelText('Admin init token') as HTMLInputElement).value.length).toBe(0)
+    expect(onVerified.mock.calls.length).toBe(0)
+  })
+
+  it('does not continue a pending rotation after unmount', async () => {
+    const user = userEvent.setup()
+    const rotation = deferred<string>()
+    rotate.mockReturnValueOnce(rotation.promise)
+    verify.mockResolvedValueOnce('verified')
+    const { unmount, onVerified } = renderRotation()
+
+    await user.type(screen.getByLabelText('Admin init token'), 'sensitive-input')
+    await user.click(screen.getByRole('button', { name: 'Rotate admin key' }))
+    await waitFor(() => expect(rotate.mock.calls.length).toBe(1))
+    unmount()
+    await act(async () => rotation.resolve('candidate-value'))
+
+    expect(verify.mock.calls.length).toBe(0)
+    expect(onVerified.mock.calls.length).toBe(0)
+  })
+
+  it('does not persist a verified candidate after unmount', async () => {
+    const user = userEvent.setup()
+    const verification = deferred<'verified'>()
+    rotate.mockResolvedValueOnce('candidate-value')
+    verify.mockReturnValueOnce(verification.promise)
+    const { unmount, onVerified } = renderRotation()
+
+    await user.type(screen.getByLabelText('Admin init token'), 'sensitive-input')
+    await user.click(screen.getByRole('button', { name: 'Rotate admin key' }))
+    await waitFor(() => expect(verify.mock.calls.length).toBe(1))
+    expect(onVerified.mock.calls.length).toBe(0)
+    unmount()
+    await act(async () => verification.resolve('verified'))
+
+    expect(onVerified.mock.calls.length).toBe(0)
   })
 
   it('keeps a candidate only in memory and retries verification without a second rotation', async () => {

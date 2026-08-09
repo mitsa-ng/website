@@ -27,6 +27,8 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
   const candidateRef = useRef<string | null>(null)
   const rotationServerUrlRef = useRef<string | null>(null)
   const inFlightRef = useRef(false)
+  const mountedRef = useRef(true)
+  const operationGenerationRef = useRef(0)
   const overlayRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLElement>(null)
   const tokenInputRef = useRef<HTMLInputElement>(null)
@@ -39,12 +41,28 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
     rotationServerUrlRef.current = null
   }
 
+  const isCurrentOperation = (generation: number) => (
+    mountedRef.current && operationGenerationRef.current === generation
+  )
+
   const handleClose = () => {
     if (inFlightRef.current) return
+    operationGenerationRef.current += 1
     clearCandidate()
     setInitToken('')
     onCloseRef.current()
   }
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      operationGenerationRef.current += 1
+      candidateRef.current = null
+      rotationServerUrlRef.current = null
+      inFlightRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     const overlay = overlayRef.current
@@ -127,12 +145,15 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
     if (submitting) dialogRef.current?.focus()
   }, [submitting])
 
-  const persistVerifiedCandidate = async (candidate: string) => {
+  const persistVerifiedCandidate = async (candidate: string, generation: number) => {
+    if (!isCurrentOperation(generation)) return
     try {
       await onVerified(candidate)
+      if (!isCurrentOperation(generation)) return
       clearCandidate()
-      onClose()
+      onCloseRef.current()
     } catch {
+      if (!isCurrentOperation(generation)) return
       setStatus('retry')
     }
   }
@@ -141,16 +162,26 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
     event.preventDefault()
     if (inFlightRef.current || !initToken.trim()) return
 
+    const generation = operationGenerationRef.current + 1
+    operationGenerationRef.current = generation
     inFlightRef.current = true
     setSubmitting(true)
     setStatus('idle')
     try {
       rotationServerUrlRef.current = serverUrl
-      const candidate = await rotateAdminApiKey(rotationServerUrlRef.current, initToken)
+      let candidate: string
+      try {
+        candidate = await rotateAdminApiKey(rotationServerUrlRef.current, initToken)
+      } finally {
+        if (isCurrentOperation(generation)) setInitToken('')
+      }
+      if (!isCurrentOperation(generation)) return
       candidateRef.current = candidate
       const verification = await verifyRotatedApiKey(candidate, rotationServerUrlRef.current)
+      if (!isCurrentOperation(generation)) return
       if (verification === 'verified') {
-        await persistVerifiedCandidate(candidate)
+        await persistVerifiedCandidate(candidate, generation)
+        if (!isCurrentOperation(generation)) return
       } else if (verification === 'unreachable') {
         setStatus('retry')
       } else {
@@ -158,12 +189,14 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
         setStatus('error')
       }
     } catch {
+      if (!isCurrentOperation(generation)) return
       clearCandidate()
       setStatus('error')
     } finally {
-      setInitToken('')
-      inFlightRef.current = false
-      setSubmitting(false)
+      if (isCurrentOperation(generation)) {
+        inFlightRef.current = false
+        setSubmitting(false)
+      }
     }
   }
 
@@ -172,22 +205,29 @@ export default function AdminKeyRotation({ serverUrl, onVerified, onClose }: Adm
     const rotationServerUrl = rotationServerUrlRef.current
     if (inFlightRef.current || !candidate || !rotationServerUrl) return
 
+    const generation = operationGenerationRef.current + 1
+    operationGenerationRef.current = generation
     inFlightRef.current = true
     setSubmitting(true)
     try {
       const verification = await verifyRotatedApiKey(candidate, rotationServerUrl)
+      if (!isCurrentOperation(generation)) return
       if (verification === 'verified') {
-        await persistVerifiedCandidate(candidate)
+        await persistVerifiedCandidate(candidate, generation)
+        if (!isCurrentOperation(generation)) return
       } else if (verification === 'rejected') {
         clearCandidate()
         setStatus('error')
       }
     } catch {
+      if (!isCurrentOperation(generation)) return
       clearCandidate()
       setStatus('error')
     } finally {
-      inFlightRef.current = false
-      setSubmitting(false)
+      if (isCurrentOperation(generation)) {
+        inFlightRef.current = false
+        setSubmitting(false)
+      }
     }
   }
 
