@@ -80,16 +80,17 @@ Schema 定義在 `website/src/db/schema.ts`，包含以下資料表：
 - **services** — 服務項目
 - **contacts** — 聯絡表單留言
 - **api_keys** — API 金鑰管理
+- **site_settings** — 網站設定（key/value，JSONB）
 
 使用 Drizzle Kit 推送 Schema：
 
 ```bash
 cd website
-pnpm add -g drizzle-kit
-drizzle-kit push
+pnpm install
+pnpm db:setup      # 執行 drizzle-kit push，建立所有資料表（含 site_settings）
 ```
 
-或直接執行 `website/src/db/schema.ts` 中的 SQL 到資料庫。
+> 也可用 `pnpm db:migrate` 走 migration 檔（`website/drizzle/*.sql`）。兩者皆會建立 `site_settings` 表；少了它，網站每個請求都會 500。
 
 ---
 
@@ -102,8 +103,8 @@ drizzle-kit push
 | 變數 | 說明 |
 |------|------|
 | `DATABASE_URL` | PostgreSQL 連線字串 |
-| `AUTH_SECRET` | NextAuth.js 加密密鑰（`openssl rand -base64 32` 產生） |
 | `NEXT_PUBLIC_SITE_URL` | 網站公開網址 |
+| `ADMIN_INIT_TOKEN` | 初始化金鑰令牌（**強烈建議**，防止他人搶先初始化）。產生方式：`node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"`。首次產生管理金鑰後可移除。 |
 
 ### 2. 部署步驟
 
@@ -123,13 +124,18 @@ vercel --prod
 
 ### 3. 初始化管理員金鑰
 
-部署完成後，呼叫初始化 API 取得管理員 API Key：
+部署完成後，呼叫初始化 API 取得管理員 API Key。**若設定了 `ADMIN_INIT_TOKEN`，請求必須帶上對應的 header**（未帶會回 401，這是為了防止他人搶先初始化取得金鑰）：
 
 ```bash
-curl -X POST https://<your-domain>/api/admin/init
+# 有設 ADMIN_INIT_TOKEN 時：
+curl -X POST https://<your-domain>/api/admin/init \
+  -H "X-Admin-Init-Token: <你的令牌>"
+
+# 本機開發未設令牌時可直接呼叫：
+curl -X POST http://localhost:3000/api/admin/init
 ```
 
-回傳的 `raw` 即為管理員金鑰，**請立即儲存**（僅顯示一次）。
+回傳的 `raw` 即為管理員金鑰，**請立即儲存**（僅顯示一次）。取得金鑰後建議從 Vercel 環境變數移除 `ADMIN_INIT_TOKEN`，關閉初始化入口。
 
 ---
 
@@ -222,8 +228,8 @@ docker run -d --name personal-web-db \
 ### 2. 設定環境變數
 
 ```bash
-cp website/.env.local website/.env.local
-# 編輯 DATABASE_URL
+cp website/.env.example website/.env.local
+# 編輯 .env.local 填入 DATABASE_URL（本地 PostgreSQL 連線字串）
 ```
 
 ### 3. 安裝相依套件
@@ -256,14 +262,14 @@ pnpm dev
 
 ### 5. 初始化資料庫
 
-Schema 推送：
+Schema 推送（建立所有資料表，包含 `site_settings`）：
 
 ```bash
 cd website
-npx drizzle-kit push
+pnpm db:setup
 ```
 
-初始化管理員金鑰：
+初始化管理員金鑰（網站需先 `pnpm dev` 啟動）：
 
 ```bash
 curl -X POST http://localhost:3000/api/admin/init
@@ -278,8 +284,10 @@ curl -X POST http://localhost:3000/api/admin/init
 | 變數 | 必要 | 說明 |
 |------|------|------|
 | `DATABASE_URL` | ✅ | PostgreSQL 連線字串 |
-| `AUTH_SECRET` | ✅ | NextAuth.js 加密密鑰 |
 | `NEXT_PUBLIC_SITE_URL` | | 網站公開網址 |
+| `ADMIN_INIT_TOKEN` | | 初始化金鑰令牌（強烈建議，首次部署後可移除） |
+
+> 註：早期版本文件曾列出 `AUTH_SECRET`（NextAuth.js 用），但本系統實際使用自訂 API Key 驗證（`X-Api-Key` header），**不需要 `AUTH_SECRET`**。
 
 ### render-service/
 

@@ -79,3 +79,8 @@ export const contacts = pgTable('contacts', {
   notified: boolean('notified').default(false),
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+export const siteSettings = pgTable('site_settings', {
+  key: text('key').primaryKey(),
+  value: jsonb('value'),
+});

@@ -201,12 +201,15 @@ function absUrl(base: string, path: string): string {
   return path
 }
 
-export async function initApiKey(serverUrl?: string, force?: boolean): Promise<string> {
+export async function initApiKey(serverUrl?: string, force?: boolean, initToken?: string): Promise<string> {
   const base = serverUrl !== undefined ? serverUrl : await getServerUrl()
   const body = force ? JSON.stringify({ force: true }) : undefined
+  const headers: Record<string, string> = {}
+  if (body) headers['Content-Type'] = 'application/json'
+  if (initToken) headers['X-Admin-Init-Token'] = initToken
   const res = await platformFetch(absUrl(base, '/api/admin/init'), {
     method: 'POST',
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: Object.keys(headers).length ? headers : undefined,
     body,
   })
   const data = await res.json()
