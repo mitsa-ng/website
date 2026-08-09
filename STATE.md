@@ -4,7 +4,7 @@ Last run: 2026-08-10 (L2 admin key rotation production rollout)
 
 ## High Priority (loop is acting or waiting on human)
 
-- **Admin key rotation shipped**: merged to `main` as `c0dcc4b`, pushed to `origin/main`, and deployed to `https://mitsa-ng.vercel.app` as Vercel production deployment `dpl_5R5eWF48UjzXMV8K5QmVKSFDsd2Z`.
+- **Admin key rotation shipped**: merged to `main` as `c0dcc4b`, pushed to `origin/main`, and deployed to the current READY Vercel production alias at `https://mitsa-ng.vercel.app`.
 - **Production recovery is ready**: a high-entropy sensitive `ADMIN_INIT_TOKEN` is stored in Vercel Production and macOS Keychain under `Personal Web Admin Recovery Token`. The production API key was atomically rotated and the new key verified successfully; no secret value was logged or persisted in the repository.
 - **Admin desktop app replaced**: `/Applications/Personal Web Admin.app` matches the signed build from merged `main` (`app.asar` SHA-256 `467f3620d3eeb0181f51f531c30bf7509e68bbca600e0b6d719a48358b990317`). The previous app is recoverable from `/private/tmp/personal-web-admin-app-backup.Reml9m/Personal Web Admin.app`.
 - **P2 awaiting review/merge separately**: branch `fix/p2-validation-deps` in worktree `/Users/mac/Documents/personal-web-p2-fix`, commit `13cf16b`.
@@ -47,7 +47,7 @@ Last run: 2026-08-10 (L2 admin key rotation production rollout)
 
 ---
 Run log:
-- 2026-08-10 — Production rollout complete: merged/pushed `c0dcc4b`; Vercel deployment `dpl_5R5eWF48UjzXMV8K5QmVKSFDsd2Z` READY and aliased to `mitsa-ng.vercel.app`; recovery token stored as Vercel Sensitive + macOS Keychain; production key rotation and new-key verification both returned 200; signed `/Applications` app replacement passed exact `app.asar` hash and real recovery-dialog smoke. New API key was placed only on the clipboard for user handoff.
+- 2026-08-10 — Production rollout complete: merged/pushed `c0dcc4b`; current Vercel production deployment is READY and aliased to `mitsa-ng.vercel.app`; recovery token stored as Vercel Sensitive + macOS Keychain; production key rotation and new-key verification both returned 200; signed `/Applications` app replacement passed exact `app.asar` hash and real recovery-dialog smoke. New API key was placed only on the clipboard for user handoff.
 - 2026-08-10 — Controller verification: admin 32/32 tests + lint + signed DMG build; website 24/24 unit tests + TypeScript + build; Electron smoke opened the real recovery dialog, focused the token field, and restored focus on Escape. Final scoped review PASS; no credentials entered.
 - 2026-08-10 — L2 admin-key-rotation final-review fix wave: init token clears before verification; unmounted/stale rotation continuations are invalidated before verify/persistence; PostgreSQL integration tests require a loopback disposable marker and use one random schema. Admin 32 tests/lint/build, website 18 unit tests/build/TypeScript, and real PostgreSQL 18 integration 2 tests passed. The unique disposable container was removed; no push/merge/deploy/production/P2.
 - 2026-08-09 — L2 P0 fix (deploy blockers), merged to main, pushed
