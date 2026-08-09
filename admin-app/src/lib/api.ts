@@ -102,6 +102,17 @@ async function platformFetch(url: string, init?: RequestInit): Promise<Response>
   return res
 }
 
+async function platformFetchWithStatus(url: string, init?: RequestInit): Promise<Response> {
+  if (window.electronAPI) {
+    const result = await window.electronAPI.apiFetch(url, init)
+    return new Response(result.text, {
+      status: result.status,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+  return fetch(url, init)
+}
+
 async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await platformFetch(url, init)
   const data = await res.json()
@@ -214,6 +225,48 @@ export async function initApiKey(serverUrl?: string, force?: boolean, initToken?
   })
   const data = await res.json()
   return data.raw
+}
+
+export type RotationVerification = 'verified' | 'rejected' | 'unreachable'
+
+export async function rotateAdminApiKey(serverUrl: string, initToken: string): Promise<string> {
+  if (!initToken?.trim()) throw new Error('rotation-request-failed')
+
+  try {
+    const res = await platformFetch(absUrl(serverUrl, '/api/admin/init'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Init-Token': initToken,
+      },
+      body: JSON.stringify({ force: true }),
+    })
+    const data: unknown = await res.json()
+    if (!data || typeof data !== 'object' || !('raw' in data) || typeof data.raw !== 'string' || !data.raw) {
+      throw new Error('rotation-request-failed')
+    }
+    return data.raw
+  } catch {
+    throw new Error('rotation-request-failed')
+  }
+}
+
+export async function verifyRotatedApiKey(key: string, serverUrl: string): Promise<RotationVerification> {
+  try {
+    const res = await platformFetchWithStatus(absUrl(serverUrl, '/api/admin/verify'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key }),
+    })
+    if (res.status === 401) return 'rejected'
+    if (res.status !== 200) return 'unreachable'
+    const data: unknown = await res.json()
+    return data && typeof data === 'object' && 'valid' in data && data.valid === true
+      ? 'verified'
+      : 'unreachable'
+  } catch {
+    return 'unreachable'
+  }
 }
 
 export async function verifyApiKey(key: string, serverUrl?: string): Promise<boolean> {
