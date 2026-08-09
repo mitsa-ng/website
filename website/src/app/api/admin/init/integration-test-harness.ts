@@ -25,8 +25,12 @@ export function requireDisposableIntegrationDatabaseUrl(testDatabaseUrl: string)
     throw new Error('TEST_DATABASE_URL must target only a loopback PostgreSQL host');
   }
 
-  const applicationNames = url.searchParams.getAll('application_name');
-  if (applicationNames.length !== 1 || applicationNames[0] !== integrationApplicationName) {
+  const queryParameters = Array.from(url.searchParams.entries());
+  if (queryParameters.length !== 1 || queryParameters[0][0] !== 'application_name') {
+    throw new Error('TEST_DATABASE_URL must contain only the required application_name parameter');
+  }
+
+  if (queryParameters[0][1] !== integrationApplicationName) {
     throw new Error(
       'TEST_DATABASE_URL must include exactly one application_name=personal-web-key-rotation-integration-test'
     );

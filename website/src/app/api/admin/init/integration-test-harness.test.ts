@@ -39,7 +39,23 @@ describe('createIsolatedIntegrationDatabaseConfig', () => {
     'postgresql://tester@[::1]/key_rotation?application_name=personal-web-key-rotation-integration-test&application_name=personal-web-key-rotation-integration-test',
   ])('refuses an unsafe database URL before a pool can be created: %s', testDatabaseUrl => {
     expect(() => createIsolatedIntegrationDatabaseConfig(testDatabaseUrl)).toThrow(
-      /TEST_DATABASE_URL must (be a PostgreSQL URL|target only a loopback PostgreSQL host|include exactly one application_name=personal-web-key-rotation-integration-test)/
+      /TEST_DATABASE_URL must (be a PostgreSQL URL|target only a loopback PostgreSQL host|contain only the required application_name parameter|include exactly one application_name=personal-web-key-rotation-integration-test)/
+    );
+  });
+
+  it.each([
+    'host=db.example',
+    'hostaddr=203.0.113.10',
+    'options=-c%20search_path%3Dpublic',
+    'service=shared-database',
+    'port=5433',
+    'unknown=value',
+  ])('refuses an additional connection-routing parameter: %s', extraParameter => {
+    const testDatabaseUrl =
+      `postgresql://tester@localhost/key_rotation?application_name=${applicationName}&${extraParameter}`;
+
+    expect(() => createIsolatedIntegrationDatabaseConfig(testDatabaseUrl)).toThrow(
+      'TEST_DATABASE_URL must contain only the required application_name parameter'
     );
   });
 });
