@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { getApiKey, setApiKey, getServerUrl, setServerUrl, initApiKey } from '../lib/api'
+import { getActiveProfileId, getApiKey, getProfiles, saveProfiles, setApiKey, getServerUrl, setServerUrl } from '../lib/api'
 import { useLocale } from '../lib/LocaleContext'
+import AdminKeyRotation from '../components/AdminKeyRotation'
 
 async function apiHeaders() {
   const key = await getApiKey()
@@ -66,6 +67,11 @@ interface SiteSettings {
   fingerprint_enabled?: boolean
   fingerprint_method?: 'hash' | 'signature'
   fingerprint_public_key?: string
+}
+
+interface RotationTarget {
+  serverUrl: string
+  profileId: string | null
 }
 
 const defaultSettings: SiteSettings = {
@@ -136,6 +142,7 @@ export default function Settings() {
   const [siteSaved, setSiteSaved] = useState(false)
   const [fingerprintSaved, setFingerprintSaved] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [rotationTarget, setRotationTarget] = useState<RotationTarget | null>(null)
 
   useEffect(() => {
     getApiKey().then(k => setKeyState(k || ''))
@@ -155,12 +162,18 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  const handleRegen = async () => {
-    if (!confirm(t.settings.confirmRegen)) return
-    await setServerUrl(url)
-    const raw = await initApiKey(url, true)
-    await setApiKey(raw)
-    setKeyState(raw)
+  const saveRotatedProfile = (rawKey: string, target: RotationTarget) => {
+    if (!target.profileId) return
+    const profiles = getProfiles()
+    saveProfiles(profiles.map(profile => profile.id === target.profileId ? { ...profile, apiKey: rawKey, serverUrl: target.serverUrl } : profile))
+  }
+
+  const handleVerifiedRotation = async (rawKey: string) => {
+    if (!rotationTarget) throw new Error('rotation-target-missing')
+    await setServerUrl(rotationTarget.serverUrl)
+    await setApiKey(rawKey)
+    saveRotatedProfile(rawKey, rotationTarget)
+    setKeyState(rawKey)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -195,18 +208,26 @@ export default function Settings() {
       <div className="card-form" style={{ maxWidth: 500, marginBottom: 24 }}>
         <h3 style={{ marginBottom: 16, fontSize: 16 }}>{t.settings.apiSection}</h3>
         <div className="form-group">
-          <label>{t.settings.serverUrl}</label>
-          <input value={url} onChange={e => setUrlState(e.target.value)} placeholder={t.settings.serverPlaceholder} />
+          <label htmlFor="settings-server-url">{t.settings.serverUrl}</label>
+          <input id="settings-server-url" value={url} onChange={e => setUrlState(e.target.value)} placeholder={t.settings.serverPlaceholder} disabled={rotationTarget !== null} />
         </div>
         <div className="form-group">
-          <label>{t.settings.apiKey}</label>
-          <input value={key} onChange={e => setKeyState(e.target.value)} type="text" />
+          <label htmlFor="settings-api-key">{t.settings.apiKey}</label>
+          <input id="settings-api-key" value={key} onChange={e => setKeyState(e.target.value)} type="text" />
         </div>
         <div className="form-actions">
           <button className="btn btn-primary" onClick={handleSave}>{saved ? t.settings.saved : t.settings.save}</button>
-          <button className="btn btn-outline" onClick={handleRegen}>{t.settings.regen}</button>
+          <button className="btn btn-outline" onClick={() => setRotationTarget({ serverUrl: url, profileId: getActiveProfileId() })}>{t.settings.regen}</button>
         </div>
       </div>
+
+      {rotationTarget ? (
+        <AdminKeyRotation
+          serverUrl={rotationTarget.serverUrl}
+          onVerified={handleVerifiedRotation}
+          onClose={() => setRotationTarget(null)}
+        />
+      ) : null}
 
       <div className="card-form" style={{ maxWidth: 500, marginBottom: 24 }}>
         <h3 style={{ marginBottom: 16, fontSize: 16 }}>{t.settings.siteSection}</h3>

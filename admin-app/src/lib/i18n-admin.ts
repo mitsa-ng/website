@@ -53,6 +53,16 @@ export const dict = {
       invalidKey: '無效的 API 金鑰',
       failVerify: '驗證失敗',
     },
+    rotation: {
+      title: '輪替管理員金鑰',
+      recoveryEntry: '沒有 API 金鑰？重新產生管理員金鑰',
+      initToken: '管理員初始化權杖',
+      rotate: '輪替管理員金鑰',
+      retry: '重試驗證',
+      unreachable: '暫時無法驗證新的金鑰。',
+      failed: '無法輪替管理員金鑰。',
+      close: '關閉',
+    },
     // Dashboard
     dashboard: {
       title: '儀表板',
@@ -304,6 +314,16 @@ export const dict = {
       failInit: 'Failed to initialize',
       invalidKey: 'Invalid API key',
       failVerify: 'Verification failed',
+    },
+    rotation: {
+      title: 'Rotate admin key',
+      recoveryEntry: "Don't have an API key? Generate one",
+      initToken: 'Admin init token',
+      rotate: 'Rotate admin key',
+      retry: 'Retry verification',
+      unreachable: 'The new key could not be verified yet.',
+      failed: 'The admin key could not be rotated.',
+      close: 'Close',
     },
     // Dashboard
     dashboard: {
