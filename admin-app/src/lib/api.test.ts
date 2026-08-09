@@ -99,4 +99,25 @@ describe('admin API key rotation helpers', () => {
     expect(storage.setItem).not.toHaveBeenCalled()
     expect(storage.removeItem).not.toHaveBeenCalled()
   })
+
+  it.each([
+    [{ ok: false, status: 401, text: JSON.stringify({ valid: false }) }, 'rejected'],
+    [{ ok: false, status: 0, text: '' }, 'unreachable'],
+  ])('classifies rotated-key verification through the Electron bridge as %s', async (reply, expected) => {
+    const apiFetch = vi.fn<(url: string, options?: RequestInit) => Promise<typeof reply>>()
+      .mockResolvedValue(reply)
+    window.electronAPI = { apiFetch }
+
+    await expect(verifyRotatedApiKey('pw_candidate_checksum', 'https://admin.example'))
+      .resolves.toBe(expected)
+
+    expect(apiFetch).toHaveBeenCalledWith('https://admin.example/api/admin/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'pw_candidate_checksum' }),
+    })
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(storage.setItem).not.toHaveBeenCalled()
+    expect(storage.removeItem).not.toHaveBeenCalled()
+  })
 })
