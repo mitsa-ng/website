@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
-import { setApiKey, setServerUrl, initApiKey, verifyApiKey, getConfig, setConfig, addProfile, setActiveProfileId, getProfiles } from '../lib/api'
+import { setApiKey, setServerUrl, verifyApiKey, getConfig, setConfig, addProfile, setActiveProfileId, getProfiles } from '../lib/api'
 import { useLocale } from '../lib/LocaleContext'
+import AdminKeyRotation from '../components/AdminKeyRotation'
 
 interface Props {
   onLogin: () => void
@@ -8,12 +9,13 @@ interface Props {
 
 export default function Login({ onLogin }: Props) {
   const { t } = useLocale()
-  const [mode, setMode] = useState<'setup' | 'init' | 'enter'>('setup')
+  const [mode, setMode] = useState<'setup' | 'enter'>('setup')
   const [serverUrl, setServerUrlState] = useState('')
   const [apiSecret, setApiSecret] = useState('')
   const [key, setKey] = useState('')
   const [url, setUrl] = useState('')
-  const [initToken, setInitToken] = useState('')
+  const [rotationServerUrl, setRotationServerUrl] = useState('')
+  const [rotationOpen, setRotationOpen] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -75,19 +77,11 @@ export default function Login({ onLogin }: Props) {
     }
   }
 
-  const handleInit = async () => {
-    setLoading(true); setError('')
-    try {
-      const raw = await initApiKey(url, false, initToken || undefined)
-      await setServerUrl(url)
-      await setApiKey(raw)
-      saveAsProfile(url, raw)
-      onLogin()
-    } catch (e: any) {
-      setError(e.message || t.login.failInit)
-    } finally {
-      setLoading(false)
-    }
+  const handleVerifiedRotation = async (rawKey: string) => {
+    await setServerUrl(rotationServerUrl)
+    await setApiKey(rawKey)
+    saveAsProfile(rotationServerUrl, rawKey)
+    onLogin()
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -117,8 +111,9 @@ export default function Login({ onLogin }: Props) {
 
           <form onSubmit={handleSetup}>
             <div className="form-group">
-              <label>Server Domain</label>
+              <label htmlFor="setup-server-url">Server Domain</label>
               <input
+                id="setup-server-url"
                 type="url"
                 value={serverUrl}
                 onChange={e => setServerUrlState(e.target.value)}
@@ -128,8 +123,9 @@ export default function Login({ onLogin }: Props) {
             </div>
 
             <div className="form-group">
-              <label>API Secret</label>
+              <label htmlFor="setup-api-secret">API Secret</label>
               <input
+                id="setup-api-secret"
                 type="password"
                 value={apiSecret}
                 onChange={e => setApiSecret(e.target.value)}
@@ -145,10 +141,17 @@ export default function Login({ onLogin }: Props) {
             </button>
           </form>
 
-          <button className="btn btn-text btn-block" type="button" onClick={() => { setUrl(serverUrl); setMode('init'); }} style={{ marginTop: 12 }}>
-            Don't have an API key? Generate one
+          <button className="btn btn-text btn-block" type="button" onClick={() => { setUrl(serverUrl); setRotationServerUrl(serverUrl); setRotationOpen(true) }} style={{ marginTop: 12, minHeight: 44 }}>
+            {t.rotation.recoveryEntry}
           </button>
         </div>
+        {rotationOpen ? (
+          <AdminKeyRotation
+            serverUrl={rotationServerUrl}
+            onVerified={handleVerifiedRotation}
+            onClose={() => setRotationOpen(false)}
+          />
+        ) : null}
       </div>
     )
   }
@@ -161,48 +164,34 @@ export default function Login({ onLogin }: Props) {
         <p className="login-sub">{t.login.subtitle}</p>
 
         <div className="form-group">
-          <label>{t.login.serverUrl}</label>
-          <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder={t.login.serverPlaceholder} />
+          <label htmlFor="login-server-url">{t.login.serverUrl}</label>
+          <input id="login-server-url" type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder={t.login.serverPlaceholder} />
         </div>
 
-        {mode === 'enter' ? (
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>{t.login.apiKey}</label>
-              <input type="text" value={key} onChange={e => setKey(e.target.value)} placeholder={t.login.apiKeyPlaceholder} />
-            </div>
-            {error && <p className="form-error">{error}</p>}
-            <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
-              {loading ? t.login.verifying : t.login.login}
-            </button>
-            <button className="btn btn-text btn-block" type="button" onClick={() => setMode('init')} style={{ marginTop: 8 }}>
-              {t.login.firstTime}
-            </button>
-            <button className="btn btn-text btn-block" type="button" onClick={() => setMode('setup')} style={{ marginTop: 8 }}>
-              Change Server
-            </button>
-          </form>
-        ) : (
-          <div>
-            <div className="form-group">
-              <label>Deploy Token (optional)</label>
-              <input
-                type="password"
-                value={initToken}
-                onChange={e => setInitToken(e.target.value)}
-                placeholder="Only if your server set ADMIN_INIT_TOKEN"
-              />
-            </div>
-            {error && <p className="form-error">{error}</p>}
-            <button className="btn btn-primary btn-block" onClick={handleInit} disabled={loading}>
-              {loading ? t.login.generating : t.login.generate}
-            </button>
-            <button className="btn btn-text btn-block" type="button" onClick={() => setMode('enter')} style={{ marginTop: 8 }}>
-              {t.login.back}
-            </button>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="login-api-key">{t.login.apiKey}</label>
+            <input id="login-api-key" type="text" value={key} onChange={e => setKey(e.target.value)} placeholder={t.login.apiKeyPlaceholder} />
           </div>
-        )}
+          {error && <p className="form-error">{error}</p>}
+          <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
+            {loading ? t.login.verifying : t.login.login}
+          </button>
+          <button className="btn btn-text btn-block" type="button" onClick={() => { setRotationServerUrl(url); setRotationOpen(true) }} style={{ marginTop: 8, minHeight: 44 }}>
+            {t.login.firstTime}
+          </button>
+          <button className="btn btn-text btn-block" type="button" onClick={() => setMode('setup')} style={{ marginTop: 8 }}>
+            Change Server
+          </button>
+        </form>
       </div>
+      {rotationOpen ? (
+        <AdminKeyRotation
+          serverUrl={rotationServerUrl}
+          onVerified={handleVerifiedRotation}
+          onClose={() => setRotationOpen(false)}
+        />
+      ) : null}
     </div>
   )
 }
