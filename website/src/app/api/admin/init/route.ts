@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'node:crypto';
-import { query } from '@/db';
+import { transaction } from '@/db';
 import { generateApiKey } from '@/lib/api-key';
 import { corsResponse } from '@/lib/cors';
 
@@ -35,32 +35,38 @@ export async function POST(req: Request) {
       // no body — use defaults
     }
 
-    const existing = await query<{ id: number }>(
-      'SELECT id FROM api_keys WHERE revoked = false LIMIT 1'
-    );
+    const apiKey = await transaction(async query => {
+      const existing = await query<{ id: number }>(
+        'SELECT id FROM api_keys WHERE revoked = false LIMIT 1'
+      );
 
-    if (existing.length > 0) {
-      if (force) {
-        await query('UPDATE api_keys SET revoked = true WHERE revoked = false');
-      } else {
-        return corsResponse({ error: 'api key already exists' }, { status: 400 });
+      if (existing.length > 0) {
+        if (force) {
+          await query('UPDATE api_keys SET revoked = true WHERE revoked = false');
+        } else {
+          return null;
+        }
       }
+
+      const generated = generateApiKey(label);
+      await query(
+        'INSERT INTO api_keys (key_hash, key_prefix, label) VALUES ($1, $2, $3)',
+        [generated.hash, generated.prefix, label]
+      );
+      return generated;
+    });
+
+    if (!apiKey) {
+      return corsResponse({ error: 'api key already exists' }, { status: 400 });
     }
 
-    const { raw, hash, prefix } = generateApiKey(label);
-
-    await query(
-      'INSERT INTO api_keys (key_hash, key_prefix, label) VALUES ($1, $2, $3)',
-      [hash, prefix, label]
-    );
-
-    const res = corsResponse({ raw, label, warning: 'save this key now, it will not be shown again' });
+    const res = corsResponse({ raw: apiKey.raw, label, warning: 'save this key now, it will not be shown again' });
     if (!initToken) {
       res.headers.set('X-Setup-Warning', 'ADMIN_INIT_TOKEN not set - init is unguarded');
     }
     return res;
-  } catch (e) {
-    console.error('Init error:', e);
-    return corsResponse({ error: String(e) }, { status: 500 });
+  } catch {
+    console.error('Init error');
+    return corsResponse({ error: 'unable to initialize api key' }, { status: 500 });
   }
 }
