@@ -140,7 +140,7 @@ export default function Login({ onLogin }: Props) {
             </button>
           </form>
 
-          <button className="btn btn-text btn-block" type="button" onClick={() => { setUrl(serverUrl); setRotationServerUrl(serverUrl); setMode('init'); }} style={{ marginTop: 12 }}>
+          <button className="btn btn-text btn-block" type="button" onClick={() => { setUrl(serverUrl); setRotationServerUrl(serverUrl); setMode('init'); }} style={{ marginTop: 12, minHeight: 44 }}>
             {t.rotation.recoveryEntry}
           </button>
         </div>
@@ -170,7 +170,7 @@ export default function Login({ onLogin }: Props) {
             <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
               {loading ? t.login.verifying : t.login.login}
             </button>
-            <button className="btn btn-text btn-block" type="button" onClick={() => { setRotationServerUrl(url); setMode('init') }} style={{ marginTop: 8 }}>
+            <button className="btn btn-text btn-block" type="button" onClick={() => { setRotationServerUrl(url); setMode('init') }} style={{ marginTop: 8, minHeight: 44 }}>
               {t.login.firstTime}
             </button>
             <button className="btn btn-text btn-block" type="button" onClick={() => setMode('setup')} style={{ marginTop: 8 }}>

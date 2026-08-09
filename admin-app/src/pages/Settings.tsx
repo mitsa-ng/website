@@ -217,7 +217,7 @@ export default function Settings() {
         </div>
         <div className="form-actions">
           <button className="btn btn-primary" onClick={handleSave}>{saved ? t.settings.saved : t.settings.save}</button>
-          <button className="btn btn-outline" onClick={() => setRotationTarget({ serverUrl: url, profileId: getActiveProfileId() })}>{t.settings.regen}</button>
+          <button className="btn btn-outline" onClick={() => setRotationTarget({ serverUrl: url, profileId: getActiveProfileId() })} style={{ minHeight: 44 }}>{t.settings.regen}</button>
         </div>
       </div>
 

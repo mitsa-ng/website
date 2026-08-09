@@ -108,4 +108,11 @@ describe('Settings rotation', () => {
       profiles[1],
     ])
   })
+
+  it('uses a 44px touch target for the rotation entry', async () => {
+    render(<LocaleProvider><Settings /></LocaleProvider>)
+
+    const rotationEntry = await screen.findByRole('button', { name: 'Regenerate Key' })
+    expect(getComputedStyle(rotationEntry).minHeight).toBe('44px')
+  })
 })

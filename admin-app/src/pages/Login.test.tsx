@@ -60,4 +60,17 @@ describe('Login rotation recovery', () => {
     expect(api.addProfile).toHaveBeenCalledWith('admin.example', 'https://admin.example', 'pw_new_checksum')
     expect(onLogin).toHaveBeenCalledTimes(1)
   })
+
+  it('uses 44px touch targets for both rotation entries', async () => {
+    const user = userEvent.setup()
+    render(<LocaleProvider><Login onLogin={vi.fn()} /></LocaleProvider>)
+
+    const setupEntry = screen.getByRole('button', { name: 'Don\'t have an API key? Generate one' })
+    expect(getComputedStyle(setupEntry).minHeight).toBe('44px')
+
+    await user.click(setupEntry)
+    await user.click((await screen.findAllByRole('button', { name: 'Close' }))[1])
+    const loginEntry = screen.getByRole('button', { name: 'First time? Initialize admin key' })
+    expect(getComputedStyle(loginEntry).minHeight).toBe('44px')
+  })
 })
