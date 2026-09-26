@@ -17,6 +17,8 @@ import BlogSection from './components/BlogSection'
 import ServicesSection from './components/ServicesSection'
 import ResumeSection from './components/ResumeSection'
 import ContactSection from './components/ContactSection'
+import JsonLd from './components/JsonLd'
+import ParkBanner from './components/ParkBanner'
 import { useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
@@ -63,6 +65,9 @@ export default function Home() {
 
   return (
     <>
+      <JsonLd type="website" />
+      <JsonLd type="person" />
+      <ParkBanner />
       <Splash />
       <StatusBar />
       <NavDesktop />
