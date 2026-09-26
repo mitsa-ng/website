@@ -6,6 +6,18 @@ import Analytics from './Analytics'
 import * as api from '../lib/api'
 
 vi.mock('../lib/api', () => ({ apiGet: vi.fn() }))
+vi.mock('../lib/google', () => ({
+  isConnected: vi.fn(() => false),
+  connect: vi.fn(),
+  disconnect: vi.fn(),
+  getSelectedProperty: vi.fn(() => ''),
+  setSelectedProperty: vi.fn(),
+  listGa4Properties: vi.fn(),
+  fetchGa4Trend: vi.fn(),
+  fetchGa4TopPages: vi.fn(),
+  fetchGscSummary: vi.fn(),
+}))
+import * as google from '../lib/google'
 
 const sampleStats: api.Stats = {
   timezone: 'Asia/Taipei',
@@ -76,3 +88,44 @@ describe('Analytics page', () => {
     expect(screen.queryByText('/en')).toBeNull()
   })
 })
+
+describe('Analytics Google section', () => {
+  const storage = (() => { const m = new Map<string, string>(); return {
+    getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => m.set(k, v),
+    removeItem: (k: string) => m.delete(k), clear: () => m.clear() } })()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubGlobal('localStorage', storage)
+    storage.clear()
+    vi.mocked(api.apiGet).mockResolvedValue(sampleStats)
+  })
+
+  afterEach(cleanup)
+
+  it('shows the connect button when Google is not connected', async () => {
+    vi.mocked(google.isConnected).mockReturnValue(false)
+    render(<LocaleProvider><Analytics /></LocaleProvider>)
+    const btn = await screen.findByRole('button', { name: 'Connect Google Account' })
+    expect(btn).toBeTruthy()
+  })
+
+  it('renders GA4 and Search Console panels once connected', async () => {
+    vi.mocked(google.isConnected).mockReturnValue(true)
+    vi.mocked(google.getSelectedProperty).mockReturnValue('properties/123')
+    vi.mocked(google.listGa4Properties).mockResolvedValue([{ id: 'properties/123', name: 'My Site' }])
+    vi.mocked(google.fetchGa4Trend).mockResolvedValue([{ date: '2026-09-27', sessions: 8, views: 20 }])
+    vi.mocked(google.fetchGa4TopPages).mockResolvedValue([{ label: '/en', views: 12 }])
+    vi.mocked(google.fetchGscSummary).mockResolvedValue({ clicks: 7, impressions: 240, topQueries: [{ label: 'nati', clicks: 3 }], trend: [] })
+
+    render(<LocaleProvider><Analytics /></LocaleProvider>)
+
+    expect(await screen.findByText('GA4 Sessions')).toBeTruthy()
+    expect(screen.getByText('GA4 Top Pages')).toBeTruthy()
+    expect(screen.getByText('Google Search Performance (28 days)')).toBeTruthy()
+    expect(screen.getByText('nati')).toBeTruthy()
+    expect(screen.getByText('240')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Connect Google Account' })).toBeNull()
+  })
+})
+

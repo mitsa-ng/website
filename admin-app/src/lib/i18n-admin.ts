@@ -92,6 +92,23 @@ export const dict = {
       totalSessions: '期間總造訪',
       tzNote: '統計以台北時間 (UTC+8) 為每日分界。',
     },
+    // Google (GA4 + Search Console)
+    google: {
+      title: 'Google 數據',
+      connect: '連接 Google 帳戶',
+      connecting: '等待瀏覽器授權…',
+      disconnect: '中斷連接',
+      property: 'GA4 資源',
+      ga4Trend: 'GA4 工作階段',
+      ga4TopPages: 'GA4 熱門頁面',
+      gscTitle: 'Google 搜尋成效（28 天）',
+      clicks: '點擊',
+      impressions: '曝光',
+      topQueries: '熱門查詢字',
+      noProperty: '找不到 GA4 資源——請確認此帳戶擁有 Analytics 資源。',
+      error: 'Google 資料讀取失敗，請重新連接。',
+      sessions: '工作階段',
+    },
     // Posts list
     posts: {
       title: '文章',
@@ -374,6 +391,23 @@ export const dict = {
       totalViews: 'Total Views',
       totalSessions: 'Total Sessions',
       tzNote: 'Days are measured in Taipei time (UTC+8).',
+    },
+    // Google (GA4 + Search Console)
+    google: {
+      title: 'Google Data',
+      connect: 'Connect Google Account',
+      connecting: 'Waiting for browser authorization…',
+      disconnect: 'Disconnect',
+      property: 'GA4 Property',
+      ga4Trend: 'GA4 Sessions',
+      ga4TopPages: 'GA4 Top Pages',
+      gscTitle: 'Google Search Performance (28 days)',
+      clicks: 'Clicks',
+      impressions: 'Impressions',
+      topQueries: 'Top Queries',
+      noProperty: 'No GA4 property found — make sure this account has an Analytics property.',
+      error: 'Failed to read Google data, please reconnect.',
+      sessions: 'Sessions',
     },
     // Posts list
     posts: {

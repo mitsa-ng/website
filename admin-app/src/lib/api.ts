@@ -88,7 +88,7 @@ declare global {
   }
 }
 
-async function platformFetch(url: string, init?: RequestInit): Promise<Response> {
+export async function platformFetch(url: string, init?: RequestInit): Promise<Response> {
   if (window.electronAPI) {
     const result = await window.electronAPI.apiFetch(url, init)
     if (!result.ok) throw new Error(result.text)
