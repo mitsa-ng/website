@@ -1,11 +1,15 @@
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://nati.dev'
+export const SITE_ORIGIN = (process.env.NEXT_PUBLIC_SITE_URL || 'https://mitsa.dpdns.org').replace(/\/+$/, '')
+
+export function canonicalUrl(path: string): string {
+  return `${SITE_ORIGIN}${path}`
+}
 
 export function websiteJsonLd(overrides?: { name?: string; description?: string }) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: overrides?.name || "Nati's Web",
-    url: BASE,
+    url: SITE_ORIGIN,
     description: overrides?.description || "Nati's personal portfolio & blog — full-stack developer, UI designer, and creative problem solver.",
   }
 }
@@ -16,7 +20,7 @@ export function personJsonLd(overrides?: { name?: string; image?: string; url?: 
     '@type': 'Person',
     name: overrides?.name || 'Nati',
     image: overrides?.image || undefined,
-    url: overrides?.url || BASE,
+    url: overrides?.url || SITE_ORIGIN,
   }
 }
 

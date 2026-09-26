@@ -31,7 +31,7 @@ export default function BlogSection() {
       <div className="blog-list">
         {(posts || []).map((post, i) => (
           <Reveal key={post.slug} delay={Math.min(i, 3)}>
-            <div className="blog-card" onClick={() => router.push(`/blog/${post.slug}`)} style={{ cursor: 'pointer' }}>
+            <div className="blog-card" onClick={() => router.push(`/${locale}/blog/${post.slug}`)} style={{ cursor: 'pointer' }}>
               <div className="date">{post.publishedAt?.slice(0, 10)}</div>
               <h3>{post[titleKey]}</h3>
               <p>{post[excerptKey]}</p>

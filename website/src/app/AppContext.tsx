@@ -70,7 +70,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const path = window.location.pathname
     const prefix = path.startsWith('/zh-TW') ? '/zh-TW' : path.startsWith('/en') ? '/en' : ''
     const rest = prefix ? path.slice(prefix.length) : path
-    window.location.href = `/${l}${rest || '/'}${window.location.search}`
+    window.location.href = `/${l}${rest || '/'}${window.location.search}${window.location.hash}`
   }, [])
 
   const toggleTheme = useCallback(() => {

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { headers } from 'next/headers'
 import { fetchSettings } from '@/lib/settings'
+import { SITE_ORIGIN } from '@/lib/seo'
 import "./globals.css"
 import { AppProvider } from "./AppContext"
 import GAScript from "./components/GAScript"
@@ -10,6 +11,8 @@ const DEFAULT_LOCALE = 'en'
 export async function generateMetadata(): Promise<Metadata> {
   const h = await headers()
   const locale = h.get('x-locale') || DEFAULT_LOCALE
+  const internalPath = h.get('x-pathname') || '/'
+  const pathSuffix = internalPath === '/' ? '' : internalPath
 
   const s = await fetchSettings()
   const title = s.site_title || "Nati's Web"
@@ -36,6 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
+    metadataBase: new URL(SITE_ORIGIN),
     title: { default: title, template: `%s | ${title}` },
     description,
     robots: { index: true, follow: true },
@@ -58,9 +62,10 @@ export async function generateMetadata(): Promise<Metadata> {
       images: s.default_og_image ? [s.default_og_image] : undefined,
     },
     alternates: {
+      canonical: `/${locale}${pathSuffix}`,
       languages: {
-        en: '/en',
-        'zh-TW': '/zh-TW',
+        en: `/en${pathSuffix}`,
+        'zh-TW': `/zh-TW${pathSuffix}`,
       },
     },
   }

@@ -13,6 +13,7 @@ import ServicesSection from '../components/ServicesSection'
 import ResumeSection from '../components/ResumeSection'
 import ContactSection from '../components/ContactSection'
 import JsonLd from '../components/JsonLd'
+import ParkBanner from '../components/ParkBanner'
 
 function PageView({ page }: { page: PageSection }) {
   const { activePage } = useApp()
@@ -58,6 +59,7 @@ export default function Home() {
     <>
       <JsonLd type="website" />
       <JsonLd type="person" />
+      <ParkBanner />
       <Suspense fallback={null}><HomeContent /></Suspense>
       <div className="page-view">
         {pages.map(p => (

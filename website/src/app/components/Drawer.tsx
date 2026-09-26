@@ -1,13 +1,11 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useApp } from '../AppContext'
 
 export default function Drawer({ onNavigate }: { onNavigate?: (key: string) => void }) {
   const router = useRouter()
-  const pathname = usePathname()
-  const { drawerOpen, setDrawerOpen, locale, setLocale, theme, toggleTheme, dict, setActivePage, setNavigating } = useApp()
-  const isHome = pathname === '/' || pathname === ''
+  const { drawerOpen, setDrawerOpen, locale, setLocale, theme, toggleTheme, dict, setNavigating } = useApp()
 
   const pages: { key: string; label: string }[] = [
     { key: 'about', label: dict.nav.about },
@@ -20,12 +18,8 @@ export default function Drawer({ onNavigate }: { onNavigate?: (key: string) => v
 
   const navigate = (key: string) => {
     setDrawerOpen(false)
-    if (isHome) {
-      setActivePage(key as any)
-    } else {
-      setNavigating(true)
-      router.push(`/${locale}/${key}`)
-    }
+    setNavigating(true)
+    router.push(`/${locale}/${key}`)
   }
 
   return (

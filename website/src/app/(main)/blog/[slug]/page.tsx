@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import type { Metadata } from 'next'
 import { query } from '@/db'
+import { canonicalUrl } from '@/lib/seo'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -112,7 +113,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <JsonLdServer
         title={title}
         description={isZh ? post.excerpt_zh : post.excerpt_en}
-        url={`/${locale}/blog/${slug}`}
+        url={canonicalUrl(`/${locale}/blog/${slug}`)}
         publishedAt={publishedAt}
       />
       <BlogNav />

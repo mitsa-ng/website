@@ -1,31 +1,38 @@
 export const dynamic = 'force-dynamic'
 
 import { query } from '@/db'
+import { SITE_ORIGIN } from '@/lib/seo'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://mitsa-ng.vercel.app'
+const LOCALES = ['en', 'zh-TW'] as const
+const SECTIONS = ['about', 'portfolio', 'blog', 'services', 'resume', 'contact'] as const
 
 export async function GET() {
-  const urls: { loc: string; freq: string; priority: number; lastmod?: string }[] = [
-    { loc: `${BASE}/`, freq: 'monthly', priority: 1.0 },
-    { loc: `${BASE}/about`, freq: 'monthly', priority: 0.8 },
-    { loc: `${BASE}/portfolio`, freq: 'weekly', priority: 0.9 },
-    { loc: `${BASE}/blog`, freq: 'weekly', priority: 0.8 },
-    { loc: `${BASE}/services`, freq: 'monthly', priority: 0.7 },
-    { loc: `${BASE}/resume`, freq: 'monthly', priority: 0.6 },
-    { loc: `${BASE}/contact`, freq: 'monthly', priority: 0.5 },
-  ]
+  const urls: { loc: string; freq: string; priority: number; lastmod?: string }[] = []
+
+  for (const locale of LOCALES) {
+    urls.push({ loc: `${SITE_ORIGIN}/${locale}`, freq: 'monthly', priority: 1.0 })
+    for (const section of SECTIONS) {
+      urls.push({
+        loc: `${SITE_ORIGIN}/${locale}/${section}`,
+        freq: section === 'portfolio' || section === 'blog' ? 'weekly' : 'monthly',
+        priority: section === 'portfolio' ? 0.9 : section === 'about' || section === 'blog' ? 0.8 : 0.6,
+      })
+    }
+  }
 
   try {
     const rows = await query<{ slug: string; published_at: string | null }>(
       `SELECT slug, published_at FROM posts WHERE published = true AND draft = false`,
     )
     for (const r of rows) {
-      urls.push({
-        loc: `${BASE}/blog/${r.slug}`,
-        freq: 'weekly',
-        priority: 0.7,
-        ...(r.published_at ? { lastmod: new Date(r.published_at).toISOString().slice(0, 10) } : {}),
-      })
+      for (const locale of LOCALES) {
+        urls.push({
+          loc: `${SITE_ORIGIN}/${locale}/blog/${r.slug}`,
+          freq: 'weekly',
+          priority: 0.7,
+          ...(r.published_at ? { lastmod: new Date(r.published_at).toISOString().slice(0, 10) } : {}),
+        })
+      }
     }
   } catch {}
 

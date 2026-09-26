@@ -16,9 +16,10 @@ const SECTIONS: { key: PageSection }[] = [
 export default function NavDesktop() {
   const pathname = usePathname()
   const router = useRouter()
-  const { dict, locale, setActivePage, setDrawerOpen, toggleTheme, theme, setLocale, setNavigating } = useApp()
+  const { dict, locale, setDrawerOpen, toggleTheme, theme, setLocale, setNavigating } = useApp()
   const [brand, setBrand] = useState('')
   const isHome = pathname === '/' || pathname === ''
+  const currentSection = isHome ? 'about' : pathname.split('/')[1] || ''
 
   useEffect(() => {
     const settings = (window as any).__SETTINGS__
@@ -38,18 +39,11 @@ export default function NavDesktop() {
   }
 
   const handleNav = (key: PageSection) => {
-    if (isHome) {
-      setActivePage(key)
-    } else {
-      setNavigating(true)
-      router.push(`/${locale}/${key}`)
-    }
+    setNavigating(true)
+    router.push(`/${locale}/${key}`)
   }
 
-  const isActive = (key: string) => {
-    if (isHome) return false
-    return pathname === `/${key}` || pathname.startsWith(`/${key}/`)
-  }
+  const isActive = (key: string) => currentSection === key
 
   return (
     <div className="nav-desktop">
@@ -60,11 +54,7 @@ export default function NavDesktop() {
         {SECTIONS.map(s => (
           <button
             key={s.key}
-            className={
-              isHome
-                ? ''
-                : isActive(s.key) ? 'active' : ''
-            }
+            className={isActive(s.key) ? 'active' : ''}
             onClick={() => handleNav(s.key)}
           >
             {labels[s.key]}
