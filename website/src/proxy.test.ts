@@ -4,6 +4,9 @@ import { NextRequest, NextResponse } from 'next/server'
 vi.mock('@/lib/cors', () => ({
   resolveAllowedOrigin: () => null,
 }))
+vi.mock('@/lib/seo', () => ({
+  SITE_ORIGIN: 'https://mitsa.dpdns.org',
+}))
 
 import { proxy } from './proxy'
 
@@ -12,7 +15,7 @@ const redirectSpy = vi.spyOn(NextResponse, 'redirect')
 const nextSpy = vi.spyOn(NextResponse, 'next')
 
 function req(path: string, init?: RequestInit): NextRequest {
-  return new NextRequest(`http://testhost${path}`, init)
+  return new NextRequest(path.startsWith('http') ? path : `http://testhost${path}`, init)
 }
 
 beforeEach(() => {
@@ -147,5 +150,58 @@ describe('unknown content paths are not sent to the homepage', () => {
     proxy(req('/en/no-such-page'))
     const [url] = rewriteSpy.mock.calls[0]
     expect(url.pathname).toBe('/no-such-page')
+  })
+})
+
+describe('legacy host redirects (mitsa-ng.vercel.app, www.mitsa.dpdns.org)', () => {
+  it('redirects a no-locale legacy path to the new origin with fixed en, query preserved', () => {
+    proxy(req('https://mitsa-ng.vercel.app/blog/hello-www?utm_source=x'))
+    expect(redirectSpy).toHaveBeenCalledTimes(1)
+    const [target, status] = redirectSpy.mock.calls[0]
+    expect(target.href).toBe('https://mitsa.dpdns.org/en/blog/hello-www?utm_source=x')
+    expect(status).toBe(307)
+  })
+
+  it('keeps the explicit locale of an old shared URL', () => {
+    proxy(req('https://mitsa-ng.vercel.app/zh-TW/portfolio?keep=1'))
+    const [target] = redirectSpy.mock.calls[0]
+    expect(target.href).toBe('https://mitsa.dpdns.org/zh-TW/portfolio?keep=1')
+  })
+
+  it('maps a legacy homepage ?tab= straight to the final route (single hop)', () => {
+    proxy(req('https://mitsa-ng.vercel.app/?tab=resume&keep=1'))
+    const [target] = redirectSpy.mock.calls[0]
+    expect(target.href).toBe('https://mitsa.dpdns.org/en/resume?keep=1')
+  })
+
+  it('redirects legacy verify links (old QR codes) with query intact', () => {
+    proxy(req('https://mitsa-ng.vercel.app/verify/nati-intro'))
+    const [target] = redirectSpy.mock.calls[0]
+    expect(target.href).toBe('https://mitsa.dpdns.org/en/verify/nati-intro')
+  })
+
+  it('redirects www to the final locale URL on the apex (single hop)', () => {
+    proxy(req('https://www.mitsa.dpdns.org/portfolio'))
+    const [target] = redirectSpy.mock.calls[0]
+    expect(target.href).toBe('https://mitsa.dpdns.org/en/portfolio')
+  })
+
+  it('never redirects API paths on the legacy host (desktop Admin keeps working)', () => {
+    const res = proxy(req('https://mitsa-ng.vercel.app/api/posts'))
+    expect(redirectSpy).not.toHaveBeenCalled()
+    expect(rewriteSpy).not.toHaveBeenCalled()
+    expect(res.status).toBe(200)
+  })
+
+  it('never redirects non-GET/HEAD requests across hosts on the legacy host', () => {
+    proxy(req('https://mitsa-ng.vercel.app/contact', { method: 'POST' }))
+    const crossHost = redirectSpy.mock.calls.some(([target]) => target.host === 'mitsa.dpdns.org')
+    expect(crossHost).toBe(false)
+  })
+
+  it('leaves preview/deployment hostnames untouched', () => {
+    proxy(req('https://website-dqpecbbvq-xingencai060-8997s-projects.vercel.app/en/about'))
+    expect(redirectSpy).not.toHaveBeenCalled()
+    expect(rewriteSpy).toHaveBeenCalled()
   })
 })

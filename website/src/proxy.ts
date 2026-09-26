@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { resolveAllowedOrigin } from '@/lib/cors'
+import { SITE_ORIGIN } from '@/lib/seo'
 
 const LOCALES = ['en', 'zh-TW'] as const
 const DEFAULT_LOCALE = 'en'
 const SECTIONS = ['about', 'portfolio', 'blog', 'services', 'resume', 'contact'] as const
+
+// Legacy public hostnames that must land on the final locale URL of the new
+// origin. API paths and non-GET/HEAD requests are excluded so the desktop
+// Admin and preview deployments keep talking to the old endpoint directly.
+// 307 until the migration is confirmed stable; flip to 308 to make it
+// permanent (browsers/CDNs cache permanent redirects indefinitely).
+const LEGACY_HOSTS = new Set(['mitsa-ng.vercel.app', 'www.mitsa.dpdns.org'])
+const LEGACY_REDIRECT_STATUS = 307
 
 const ALLOW_HEADERS = 'Content-Type, X-Api-Key, X-Admin-Init-Token'
 const ALLOW_METHODS = 'GET, POST, PUT, DELETE, OPTIONS'
@@ -76,6 +85,33 @@ export function proxy(request: NextRequest) {
 
   if (pathname === '/sitemap.xml' || pathname === '/robots.txt') {
     return cors(NextResponse.next(), request)
+  }
+
+  if (request.method === 'GET' || request.method === 'HEAD') {
+    const host = (request.headers.get('x-forwarded-host')?.split(',')[0] || request.nextUrl.host || '')
+      .trim().toLowerCase()
+    if (LEGACY_HOSTS.has(host)) {
+      // Permanent rules must not bake in cookie/Accept-Language state, so
+      // locale-less legacy paths take the fixed default; explicit locales
+      // on old shared URLs are preserved.
+      const hasLocale = LOCALES.some(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
+      if (hasLocale) {
+        const target = new URL(`${SITE_ORIGIN}${pathname}`)
+        target.search = request.nextUrl.search
+        return NextResponse.redirect(target, LEGACY_REDIRECT_STATUS)
+      }
+      if (pathname === '/') {
+        const tab = tabTarget(request, DEFAULT_LOCALE)
+        if (tab) {
+          const target = new URL(`${SITE_ORIGIN}${tab.pathname}`)
+          target.search = tab.search
+          return NextResponse.redirect(target, LEGACY_REDIRECT_STATUS)
+        }
+      }
+      const target = new URL(`${SITE_ORIGIN}/en${pathname === '/' ? '' : pathname}`)
+      target.search = request.nextUrl.search
+      return NextResponse.redirect(target, LEGACY_REDIRECT_STATUS)
+    }
   }
 
   const pathLocale = LOCALES.find(
