@@ -332,3 +332,20 @@ export interface Contact {
   message: string
   createdAt: string
 }
+
+export interface DailySeriesPoint {
+  date: string
+  views: number
+  sessions: number
+}
+
+export interface Stats {
+  timezone: string
+  days: number
+  series: DailySeriesPoint[]
+  topPages: { path: string; views: number }[]
+  topReferrers: { referrer: string; views: number }[]
+  locales: { locale: string; views: number }[]
+  today: { views: number; sessions: number }
+  total: { views: number; sessions: number }
+}

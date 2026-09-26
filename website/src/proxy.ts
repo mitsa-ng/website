@@ -60,7 +60,7 @@ export function proxy(request: NextRequest) {
       return cors(new NextResponse(null, { status: 204 }), request)
     }
 
-    const publicPaths = ['/api/contact', '/api/auth/']
+    const publicPaths = ['/api/contact', '/api/auth/', '/api/track']
     const publicGetPaths = ['/api/posts', '/api/projects', '/api/services', '/api/settings']
 
     const isPublic = publicPaths.some(p => pathname === p || pathname.startsWith(p))

@@ -17,6 +17,7 @@ export const dict = {
       contacts: '聯絡',
       settings: '設定',
       seo: 'SEO',
+      analytics: '數據',
     },
     profileManager: {
       title: '站台設定檔',
@@ -70,6 +71,26 @@ export const dict = {
       projects: '專案',
       services: '服務',
       contacts: '聯絡',
+      todayViews: '今日瀏覽',
+      weekViews: '7 天瀏覽',
+    },
+    // Analytics
+    analyticsPage: {
+      title: '數據',
+      days7: '7 天',
+      days28: '28 天',
+      days90: '90 天',
+      dailyTrend: '每日趨勢',
+      views: '瀏覽',
+      sessions: '造訪',
+      topPages: '熱門頁面',
+      topReferrers: '來源網域',
+      locales: '語言',
+      direct: '直接連結',
+      noData: '尚無資料——訪客瀏覽網站後就會出現。',
+      totalViews: '期間總瀏覽',
+      totalSessions: '期間總造訪',
+      tzNote: '統計以台北時間 (UTC+8) 為每日分界。',
     },
     // Posts list
     posts: {
@@ -279,6 +300,7 @@ export const dict = {
       contacts: 'Contacts',
       settings: 'Settings',
       seo: 'SEO',
+      analytics: 'Analytics',
     },
     profileManager: {
       title: 'Site Profiles',
@@ -332,6 +354,26 @@ export const dict = {
       projects: 'Projects',
       services: 'Services',
       contacts: 'Contacts',
+      todayViews: 'Views Today',
+      weekViews: '7-Day Views',
+    },
+    // Analytics
+    analyticsPage: {
+      title: 'Analytics',
+      days7: '7 days',
+      days28: '28 days',
+      days90: '90 days',
+      dailyTrend: 'Daily Trend',
+      views: 'Views',
+      sessions: 'Sessions',
+      topPages: 'Top Pages',
+      topReferrers: 'Referrers',
+      locales: 'Languages',
+      direct: 'Direct',
+      noData: 'No data yet — it appears once visitors browse the site.',
+      totalViews: 'Total Views',
+      totalSessions: 'Total Sessions',
+      tzNote: 'Days are measured in Taipei time (UTC+8).',
     },
     // Posts list
     posts: {

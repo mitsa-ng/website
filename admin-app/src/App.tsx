@@ -12,6 +12,7 @@ import Contacts from './pages/Contacts'
 import ContactEdit from './pages/ContactEdit'
 import Settings from './pages/Settings'
 import SEO from './pages/SEO'
+import Analytics from './pages/Analytics'
 import Login from './pages/Login'
 
 function AppInner() {
@@ -72,6 +73,7 @@ function AppInner() {
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/contacts/:id/edit" element={<ContactEdit />} />
             <Route path="/seo" element={<SEO />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

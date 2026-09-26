@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, boolean, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, boolean, timestamp, jsonb, date, index } from 'drizzle-orm/pg-core';
 
 export const apiKeys = pgTable('api_keys', {
   id: serial('id').primaryKey(),
@@ -9,6 +9,17 @@ export const apiKeys = pgTable('api_keys', {
   lastUsedAt: timestamp('last_used_at'),
   revoked: boolean('revoked').default(false),
 });
+
+export const visits = pgTable('visits', {
+  day: date('day').notNull(),
+  path: text('path').notNull(),
+  locale: text('locale').notNull(),
+  referrerHost: text('referrer_host'),
+  sessionId: text('session_id').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (t) => ({
+  dayPathIdx: index('visits_day_path_idx').on(t.day, t.path),
+}));
 
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),

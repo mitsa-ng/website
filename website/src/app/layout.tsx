@@ -5,6 +5,7 @@ import { SITE_ORIGIN } from '@/lib/seo'
 import "./globals.css"
 import { AppProvider } from "./AppContext"
 import GAScript from "./components/GAScript"
+import VisitTracker from "./components/VisitTracker"
 
 const DEFAULT_LOCALE = 'en'
 
@@ -93,6 +94,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head />
       <body className="h-full">
         <GAScript gaId={gaId} />
+        <VisitTracker />
         <script dangerouslySetInnerHTML={{ __html: `window.__SETTINGS__=${clientSettings}` }} />
         <AppProvider>{children}</AppProvider>
       </body>
