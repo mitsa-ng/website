@@ -159,7 +159,7 @@ describe('legacy host redirects (mitsa-ng.vercel.app, www.mitsa.dpdns.org)', () 
     expect(redirectSpy).toHaveBeenCalledTimes(1)
     const [target, status] = redirectSpy.mock.calls[0]
     expect(target.href).toBe('https://mitsa.dpdns.org/en/blog/hello-www?utm_source=x')
-    expect(status).toBe(307)
+    expect(status).toBe(308)
   })
 
   it('keeps the explicit locale of an old shared URL', () => {

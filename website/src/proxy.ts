@@ -10,10 +10,9 @@ const SECTIONS = ['about', 'portfolio', 'blog', 'services', 'resume', 'contact']
 // Legacy public hostnames that must land on the final locale URL of the new
 // origin. API paths and non-GET/HEAD requests are excluded so the desktop
 // Admin and preview deployments keep talking to the old endpoint directly.
-// 307 until the migration is confirmed stable; flip to 308 to make it
-// permanent (browsers/CDNs cache permanent redirects indefinitely).
+// 308 keeps method/body semantics and is cached permanently by clients.
 const LEGACY_HOSTS = new Set(['mitsa-ng.vercel.app', 'www.mitsa.dpdns.org'])
-const LEGACY_REDIRECT_STATUS = 307
+const LEGACY_REDIRECT_STATUS = 308
 
 const ALLOW_HEADERS = 'Content-Type, X-Api-Key, X-Admin-Init-Token'
 const ALLOW_METHODS = 'GET, POST, PUT, DELETE, OPTIONS'
